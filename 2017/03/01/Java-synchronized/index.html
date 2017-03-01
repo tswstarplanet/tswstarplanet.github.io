@@ -3,17 +3,20 @@
 <head>
   <meta charset="utf-8">
   
-  <title>My Blog</title>
+  <title>Java中synchronized关键字的含义 | My Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="nothing">
-<meta property="og:type" content="website">
-<meta property="og:title" content="My Blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="在Java中，每一个线程都有一个内部锁。当我们使用synchronized关键字时，就是利用这个内部锁来实现线程对某个对象的锁定控制。那么，如果某个对象中有两个方法，方法一和方法二都使用了synchronized关键字。如果线程一执行该对象的方法一，线程二执行该对象的方法二。如果线程1一直不释放该对象的内部锁的话，那么线程二应该无法执行该对象的方法二。下面就用代码来验证一下。首先，定义一个Task">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中synchronized关键字的含义">
+<meta property="og:url" content="http://yoursite.com/2017/03/01/Java-synchronized/index.html">
 <meta property="og:site_name" content="My Blog">
-<meta property="og:description" content="nothing">
+<meta property="og:description" content="在Java中，每一个线程都有一个内部锁。当我们使用synchronized关键字时，就是利用这个内部锁来实现线程对某个对象的锁定控制。那么，如果某个对象中有两个方法，方法一和方法二都使用了synchronized关键字。如果线程一执行该对象的方法一，线程二执行该对象的方法二。如果线程1一直不释放该对象的内部锁的话，那么线程二应该无法执行该对象的方法二。下面就用代码来验证一下。首先，定义一个Task">
+<meta property="og:image" content="http://yoursite.com/images/synchronized.png">
+<meta property="og:updated_time" content="2017-03-01T12:23:47.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="My Blog">
-<meta name="twitter:description" content="nothing">
+<meta name="twitter:title" content="Java中synchronized关键字的含义">
+<meta name="twitter:description" content="在Java中，每一个线程都有一个内部锁。当我们使用synchronized关键字时，就是利用这个内部锁来实现线程对某个对象的锁定控制。那么，如果某个对象中有两个方法，方法一和方法二都使用了synchronized关键字。如果线程一执行该对象的方法一，线程二执行该对象的方法二。如果线程1一直不释放该对象的内部锁的话，那么线程二应该无法执行该对象的方法二。下面就用代码来验证一下。首先，定义一个Task">
+<meta name="twitter:image" content="http://yoursite.com/images/synchronized.png">
   
     <link rel="alternate" href="/atom.xml" title="My Blog" type="application/atom+xml">
   
@@ -66,9 +69,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-Java-synchronized" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-Java-synchronized" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/03/01/Java-synchronized/" class="article-date">
   <time datetime="2017-03-01T12:23:47.000Z" itemprop="datePublished">2017-03-01</time>
@@ -81,8 +82,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的含义</a>
+    <h1 class="article-title" itemprop="name">
+      Java中synchronized关键字的含义
     </h1>
   
 
@@ -109,55 +110,19 @@
     </footer>
   </div>
   
-</article>
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/03/01/hello-world/" class="article-date">
-  <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished">2017-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/01/hello-world/">Hello World</a>
-    </h1>
+    <a href="/2017/03/01/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Hello World</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/hello-world/" data-id="cizpsn71l00002tisj0asdgp3" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
   
 </article>
-
-
-  
 
 </section>
         
