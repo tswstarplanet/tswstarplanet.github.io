@@ -3,21 +3,27 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hello World | My Blog</title>
+  <title>《Java核心技术（英文版）》读书笔记：Object类的equals方法 | My Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+  <meta name="description" content="Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：
+1public class Employee extends Object
+equals方法引用同一equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：
+123public boolean equals(Object obj) &amp;#123;">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
+<meta property="og:title" content="《Java核心技术（英文版）》读书笔记：Object类的equals方法">
 <meta property="og:url" content="http://yoursite.com/2017/03/01/hello-world/index.html">
 <meta property="og:site_name" content="My Blog">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
-<meta property="og:updated_time" content="2017-02-28T16:59:03.000Z">
+<meta property="og:description" content="Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：
+1public class Employee extends Object
+equals方法引用同一equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：
+123public boolean equals(Object obj) &amp;#123;">
+<meta property="og:updated_time" content="2017-03-06T15:33:55.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hello World">
-<meta name="twitter:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub.
-Quick">
+<meta name="twitter:title" content="《Java核心技术（英文版）》读书笔记：Object类的equals方法">
+<meta name="twitter:description" content="Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：
+1public class Employee extends Object
+equals方法引用同一equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：
+123public boolean equals(Object obj) &amp;#123;">
   
     <link rel="alternate" href="/atom.xml" title="My Blog" type="application/atom+xml">
   
@@ -59,9 +65,9 @@ Quick">
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
@@ -84,7 +90,7 @@ Quick">
         
   
     <h1 class="article-title" itemprop="name">
-      Hello World
+      《Java核心技术（英文版）》读书笔记：Object类的equals方法
     </h1>
   
 
@@ -92,20 +98,22 @@ Quick">
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+        <p>Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> <span class="keyword">extends</span> <span class="title">Object</span></span></div></pre></td></tr></table></figure>
+<h2 id="equals方法"><a href="#equals方法" class="headerlink" title="equals方法"></a>equals方法</h2><h3 id="引用同一"><a href="#引用同一" class="headerlink" title="引用同一"></a>引用同一</h3><p>equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从源代码可知，该实现是检查两个对象的引用是否相等，也即是检查两个对象是否指向Java堆中的同一个对象。这是因为，如果两个对象的引用指向同一个Java堆中的对象，则这两个对象必然是相等的。对极少数类的<br>对象来说，这个实现已经足够了。例如两个PrintStream对象。</p>
+<h3 id="状态相等"><a href="#状态相等" class="headerlink" title="状态相等"></a>状态相等</h3><p>如上文所述，对大多数类来说，Object中的equals实现是不够用的。因为很多时候，我们认为两个对象相等是基于它们具有相同的状态（即对象的属性，field）。例如，两个Employee对象，如果它们具有相同的姓名（name），<br>工资（salary）和雇佣日期（hire day），那它们就是相等的。它的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object otherObject)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == otherObject)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (otherObject == <span class="keyword">null</span>)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        <span class="keyword">if</span> (getClass() ！= otherObject.getClass())</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        Employee other = (Employee) otherObject;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> name.equals(other.name)</div><div class="line">            &amp;&amp; salary == other.salary;</div><div class="line">            &amp;&amp; hireDay.equals(other.hireDay);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码中，首先判断两个对象是否同一，其次判断被比较对象是否为null，再次比较两个对象所属的类是否相同（在此处，假定必须类相同才有可能相等），最后比较各个状态是否相等。注意如果状态也是对象的话，<br>则会递归调用它们的equals方法。</p>
+<p>这里要注意的是，Employee对象的name和hireDay等状态是有可能为null的，为了确保在这种情况下程序也是正确的，可以使用Objects.equals方法。调用Objects.equals(a, b)，若两个参数都是null返回true，<br>若其中一个为null返回false，以上都不成立则调用a.equals(b)。因此，上面方法的最后一条语句可修改为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> Objects.equals(name, other.name)</div><div class="line">    &amp;&amp; salary == other.salary;</div><div class="line">    &amp;&amp; Objects.equals(hireDay, other.hireDay);</div></pre></td></tr></table></figure>
+<p>当在扩展类中定义了equals方法时，须首先调用超类的equals方法，如果返回false，则两个对象不可能相等。若返回true，即是超类定义的状态相等。则继续比较子类定义的状态。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/hello-world/" data-id="cizqxzmt30001p8isomu8umhs" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/hello-world/" data-id="cizqxzmt30001p8isomu8umhs" class="article-share-link">Partager</a>
       
       
     </footer>
@@ -115,7 +123,7 @@ Quick">
 <nav id="article-nav">
   
     <a href="/2017/03/01/Java-synchronized/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
+      <strong class="article-nav-caption">Récent</strong>
       <div class="article-nav-title">
         
           Java中synchronized关键字的研究
@@ -153,7 +161,7 @@ Quick">
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
@@ -162,7 +170,7 @@ Quick">
           </li>
         
           <li>
-            <a href="/2017/03/01/hello-world/">Hello World</a>
+            <a href="/2017/03/01/hello-world/">《Java核心技术（英文版）》读书笔记：Object类的equals方法</a>
           </li>
         
       </ul>
@@ -178,7 +186,7 @@ Quick">
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2017 wts<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
