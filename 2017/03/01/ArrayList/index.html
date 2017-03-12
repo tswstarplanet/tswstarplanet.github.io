@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Java集合中的ArrayList类（一）：构造实例和添加元素 | My Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。
+无参构造器示例代码：
+123456789public class ArrayListTest &amp;#123;    public static void main(String[] args) &amp;#123;        List&amp;lt;String&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java集合中的ArrayList类（一）：构造实例和添加元素">
+<meta property="og:url" content="http://yoursite.com/2017/03/01/ArrayList/index.html">
+<meta property="og:site_name" content="My Blog">
+<meta property="og:description" content="ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。
+无参构造器示例代码：
+123456789public class ArrayListTest &amp;#123;    public static void main(String[] args) &amp;#123;        List&amp;lt;String&amp;">
+<meta property="og:updated_time" content="2017-03-12T14:51:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java集合中的ArrayList类（一）：构造实例和添加元素">
+<meta name="twitter:description" content="ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。
+无参构造器示例代码：
+123456789public class ArrayListTest &amp;#123;    public static void main(String[] args) &amp;#123;        List&amp;lt;String&amp;">
+  
+    <link rel="alternate" href="/atom.xml" title="My Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">My Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Programmer Article</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ArrayList" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/01/ArrayList/" class="article-date">
+  <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished">2017-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java集合中的ArrayList类（一）：构造实例和添加元素
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。</p>
+<h2 id="无参构造器"><a href="#无参构造器" class="headerlink" title="无参构造器"></a>无参构造器</h2><p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        strings.add(<span class="string">"abc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面看调用构造器以及添加元素的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 用初始的10的容量大小构造一个空的list</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从上述构造器可以看出，无参构造器只是很简单将常量DEFAULTCAPACITY_EMPTY_ELEMENTDATA赋给成员变量elementData。这个成员变量和常量如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Shared empty array instance used for default sized empty instances. We</div><div class="line"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</div><div class="line"> * first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * The array buffer into which the elements of the ArrayList are stored.</div><div class="line"> * The capacity of the ArrayList is the length of this array buffer. Any</div><div class="line"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</div><div class="line"> * will be expanded to DEFAULT_CAPACITY when the first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></div></pre></td></tr></table></figure>
+<p>从注释可以看出，DEFAULTCAPACITY_EMPTY_ELEMENTDATA是一个空的数组实例，用来作为默认大小的空List。它与EMPTY_ELEMENTDATA同时存在，是为了当第一个元素被添加到list中时，能算出要扩展多大的容量。</p>
+<p>elementData是ArrayList中用于实际存储元素的数组。一个ArrayList实例的容量就是这个数组的长度。任何调用了默认构造器生成的ArrayList实例，都执行了elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA，当第一个元素被添加到list中时，都会被扩展到默认的容量大小，即DEFAULT_CAPACITY（10）。</p>
+<p>末尾添加元素的函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Appends the specified element to the end of this list.</div><div class="line">*</div><div class="line">* <span class="doctag">@param</span> e element to be appended to this list</div><div class="line">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    <span class="comment">// 扩容之后将新增的元素加到末尾，同时将list的size加一。</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该方法首先调用了ensureCapacityInternal函数，用于确保容量足以添加一个元素。ensureCapacityInternal方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123; <span class="comment">// 插入“abc”时，minCapacity为1</span></div><div class="line">    <span class="comment">// 当调用无参构造器时，初始存储元素的数组是DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></div><div class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</div><div class="line">        <span class="comment">// 比较参数和默认容量大小，取大者作为扩展多容量</span></div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); <span class="comment">// minCapacity变为10</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后调用了ensureExplicitCapacity函数，继续扩展容量大操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// 检查目标容量是否大于当前数组的实际长度</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述方法继续调用grow函数，完成扩容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Increases the capacity to ensure that it can hold at least the</div><div class="line"> * number of elements specified by the minimum capacity argument.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> minCapacity the desired minimum capacity</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="comment">// 容量扩充增量为当前数组容量大50%</span></div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="comment">// 若扩充后仍达不到目标容量，则直接使用目标容量作为新容量</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="comment">// 若超过最大容量，则调用hugeCapacity函数</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// 调用工具函数扩容，末尾用null补全</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从注释可知，该方法增长容量以确保list至少能保存传入参数大小数量多元素。之后，就可以插入元素“abc”。插入之后，list的size为1，容量为10.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/01/ArrayList/" data-id="cj06st80l0000ipisrm7wu513" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/03/01/PushbackInputStream/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Java IO 中的PushbackInputStream类
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的研究</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/hello-world/">《Java核心技术（英文版）》读书笔记：Object类的equals方法</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/PushbackInputStream/">Java IO 中的PushbackInputStream类</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/ArrayList/">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 wts<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
