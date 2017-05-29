@@ -68,6 +68,74 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-RabbitMQ-HelloWorld" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/05/29/RabbitMQ-HelloWorld/" class="article-date">
+  <time datetime="2017-05-29T15:50:13.000Z" itemprop="datePublished">2017-05-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/29/RabbitMQ-HelloWorld/">RabbitMQ的Java客户端（一）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>RabbitMQ是一个常用的消息队列中间件，它能接收并转发消息。在消息通信模型中，系统可分为三部分：生产者，消息服务器和消费者。简单地说，生产者程序产生消息，发布到消息服务器；消费者程序连接到消息服务器，订阅到队列中。每当消息到达特定等队列时，RabbitMQ会将其发送给其中一个订阅/监听的消费者。<br>在RabbitMQ中，生产者并不是直接将消息交给某个消息队列的，而是将消息发送给交换器，发送时会指定投递的规则，这些规则称为路由键。交换器中最简单等一种就是direct交换器。它是一个以空白字符串为名称等默认交换器。当声明一个队列时，默认绑定到direct交换器。direct交换器的规则非常简单：如果路由键（队列名）匹配的话，消息就被投递到对应等队列。如下图所示</p>
+<h2 id="Java客户端"><a href="#Java客户端" class="headerlink" title="Java客户端"></a>Java客户端</h2><p>Java是当今流行的服务器应用程序开发语言。RabbitMQ也提供了Java的客户端SDK。用Java实现direct交换器中的生产者示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">package</span> com.wts.helloworld;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.Channel;</div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.Connection;</div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.ConnectionFactory;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by weitaosheng on 2017/5/1.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Send</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String QUEUE_NAME = <span class="string">"hello"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</div><div class="line">        factory.setHost(<span class="string">"localhost"</span>);</div><div class="line">        Connection connection = factory.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line"></div><div class="line">        channel.queueDeclare(QUEUE_NAME, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</div><div class="line">        String message = <span class="string">"Hello World!"</span>;</div><div class="line">        channel.basicPublish(<span class="string">""</span>, QUEUE_NAME, <span class="keyword">null</span>, message.getBytes());</div><div class="line">        System.out.println(<span class="string">" [x] Sent '"</span> + message + <span class="string">"'"</span>);</div><div class="line"></div><div class="line">        channel.close();</div><div class="line">        connection.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建一个消息生产者等步骤：</p>
+<ol>
+<li>新建连接工厂；</li>
+<li>绑定RabbitMQ服务器地址（默认为localhost，端口5672）；</li>
+<li>获取连接；</li>
+<li>建立频道（channel）；</li>
+<li>声明队列；</li>
+<li>发布消息。</li>
+<li>关闭频道；</li>
+<li>关闭连接。</li>
+</ol>
+<p>客户端示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.*;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by weitaosheng on 2017/5/1.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Recv</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String QUEUE_NAME = <span class="string">"hello"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</div><div class="line">        factory.setHost(<span class="string">"localhost"</span>);</div><div class="line">        Connection connection = factory.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line"></div><div class="line">        channel.queueDeclare(QUEUE_NAME, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</div><div class="line">        System.out.println(<span class="string">" [*] Waiting for message. To exit press CTRL+C"</span>);</div><div class="line"></div><div class="line">        Consumer consumer = <span class="keyword">new</span> DefaultConsumer(channel) &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">                String message = <span class="keyword">new</span> String(body, <span class="string">"UTF-8"</span>);</div><div class="line">                System.out.println(<span class="string">" [x] Received '"</span> + message + <span class="string">"'"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">        channel.basicConsume(QUEUE_NAME, <span class="keyword">true</span>, consumer);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建客户端并订阅队列的步骤：</p>
+<ol>
+<li>新建连接工厂；</li>
+<li>绑定RabbitMQ服务器地址（默认为localhost，端口5672）；</li>
+<li>获取连接；</li>
+<li>建立频道（channel）；</li>
+<li>声明队列；</li>
+<li>声明一个消息消费者，本示例中是用一个匿名内部类来扩展了DefaltConsumer类，并重写了handleDelivery方法，该方法定义了接收到消息时进行等处理。</li>
+</ol>
+<p>以下是客户端SDK关键的类和方法：<br>ConnectionFactory：连接工厂关键类，是客户端访问RabbitMQ服务器必须要先构造的类。从Connection的源代码可以看出，ConnectionFactory没有显示定义构造函数，因此使用的是编译器自动生成的默认构造函数。<br>获取连接的函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> Connection <span class="title">newConnection</span><span class="params">()</span> <span class="keyword">throws</span> IOException, TimeoutException </span>&#123;</div><div class="line">    <span class="keyword">return</span> newConnection(<span class="keyword">this</span>.sharedExecutor, Collections.singletonList(<span class="keyword">new</span> Address(getHost(), getPort())));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>查看源码，sharedExecutor是一个ExecutorService的实例。此处为null，也就是没有使用线程池。连接时还需要地址和端口。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function">Channel <span class="title">createChannel</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</div></pre></td></tr></table></figure></p>
+<p>createChannel：生成一个Channel类的实例。Connection是一条真实的TCP连接，Channel是Connection内等一条虚拟连接，它在RabbitMQ中会自动生成唯一的ID。通过一条TCP连接内多个虚拟连接的方式，可以提高性能，节约系统资源，因为TCP连接的创建和销毁是非常昂贵的。<br>Queue.DeclareOk queueDeclare(String queue, boolean durable, boolean exclusive, boolean autoDelete,<br>                             Map<string, object=""> arguments) throws IOException;<br>queueDeclare：声明队列。它的几个参数的含义是：队列名，是否持久化，是否是限制性等队列（仅限于此次连接），是否自动删除消息，其他参数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">basicPublish</span><span class="params">(String exchange, String routingKey, BasicProperties props, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException</span>;</div></pre></td></tr></table></figure></string,></p>
+<p>basicPublish：发布消息，几个参数是：交换器名，路由键，是否设置了mandatory参数，消息参数，消息体（用byte数组装载）</p>
+<p>Consumer是代表消费者等接口，DefaultConsumer是Consumer接口的一个默认实现。一般定义消费者只需扩展这个类即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></div><div class="line">                           Envelope envelope,</div><div class="line">                           AMQP.BasicProperties properties,</div><div class="line">                           <span class="keyword">byte</span>[] body)</div></pre></td></tr></table></figure></p>
+<p>handleDelivery：消费者接收到消息时的回调方法。它的几个参数是：消费者标签，『信封』信息，消息头内容，消息体</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/05/29/RabbitMQ-HelloWorld/" data-id="cj3abkb8p0004mlisk5w8l8me" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java-synchronized" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/03/01/Java-synchronized/" class="article-date">
@@ -103,54 +171,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/Java-synchronized/" data-id="cizqxzmsz0000p8isn5ufefi0" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/03/01/hello-world/" class="article-date">
-  <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished">2017-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/01/hello-world/">《Java核心技术（英文版）》读书笔记：Object类的equals方法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> <span class="keyword">extends</span> <span class="title">Object</span></span></div></pre></td></tr></table></figure>
-<h2 id="equals方法"><a href="#equals方法" class="headerlink" title="equals方法"></a>equals方法</h2><h3 id="引用同一"><a href="#引用同一" class="headerlink" title="引用同一"></a>引用同一</h3><p>equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从源代码可知，该实现是检查两个对象的引用是否相等，也即是检查两个对象是否指向Java堆中的同一个对象。这是因为，如果两个对象的引用指向同一个Java堆中的对象，则这两个对象必然是相等的。对极少数类的<br>对象来说，这个实现已经足够了。例如两个PrintStream对象。</p>
-<h3 id="状态相等"><a href="#状态相等" class="headerlink" title="状态相等"></a>状态相等</h3><p>如上文所述，对大多数类来说，Object中的equals实现是不够用的。因为很多时候，我们认为两个对象相等是基于它们具有相同的状态（即对象的属性，field）。例如，两个Employee对象，如果它们具有相同的姓名（name），<br>工资（salary）和雇佣日期（hire day），那它们就是相等的。它的实现如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object otherObject)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == otherObject)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (otherObject == <span class="keyword">null</span>)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        <span class="keyword">if</span> (getClass() ！= otherObject.getClass())</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        Employee other = (Employee) otherObject;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> name.equals(other.name)</div><div class="line">            &amp;&amp; salary == other.salary;</div><div class="line">            &amp;&amp; hireDay.equals(other.hireDay);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上面的代码中，首先判断两个对象是否同一，其次判断被比较对象是否为null，再次比较两个对象所属的类是否相同（在此处，假定必须类相同才有可能相等），最后比较各个状态是否相等。注意如果状态也是对象的话，<br>则会递归调用它们的equals方法。</p>
-<p>这里要注意的是，Employee对象的name和hireDay等状态是有可能为null的，为了确保在这种情况下程序也是正确的，可以使用Objects.equals方法。调用Objects.equals(a, b)，若两个参数都是null返回true，<br>若其中一个为null返回false，以上都不成立则调用a.equals(b)。因此，上面方法的最后一条语句可修改为</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> Objects.equals(name, other.name)</div><div class="line">    &amp;&amp; salary == other.salary;</div><div class="line">    &amp;&amp; Objects.equals(hireDay, other.hireDay);</div></pre></td></tr></table></figure>
-<p>当在扩展类中定义了equals方法时，须首先调用超类的equals方法，如果返回false，则两个对象不可能相等。若返回true，即是超类定义的状态相等。则继续比较子类定义的状态。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/hello-world/" data-id="cizqxzmt30001p8isomu8umhs" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/Java-synchronized/" data-id="cj3abkb8n0003mliss6hax9ng" class="article-share-link">Share</a>
       
       
     </footer>
@@ -204,7 +225,54 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/PushbackInputStream/" data-id="cj04s5rpp0000xwis2ar6ymws" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/PushbackInputStream/" data-id="cj3abkb830000mlisa0tnsi35" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/01/hello-world/" class="article-date">
+  <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished">2017-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/01/hello-world/">《Java核心技术（英文版）》读书笔记：Object类的equals方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> <span class="keyword">extends</span> <span class="title">Object</span></span></div></pre></td></tr></table></figure>
+<h2 id="equals方法"><a href="#equals方法" class="headerlink" title="equals方法"></a>equals方法</h2><h3 id="引用同一"><a href="#引用同一" class="headerlink" title="引用同一"></a>引用同一</h3><p>equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从源代码可知，该实现是检查两个对象的引用是否相等，也即是检查两个对象是否指向Java堆中的同一个对象。这是因为，如果两个对象的引用指向同一个Java堆中的对象，则这两个对象必然是相等的。对极少数类的<br>对象来说，这个实现已经足够了。例如两个PrintStream对象。</p>
+<h3 id="状态相等"><a href="#状态相等" class="headerlink" title="状态相等"></a>状态相等</h3><p>如上文所述，对大多数类来说，Object中的equals实现是不够用的。因为很多时候，我们认为两个对象相等是基于它们具有相同的状态（即对象的属性，field）。例如，两个Employee对象，如果它们具有相同的姓名（name），<br>工资（salary）和雇佣日期（hire day），那它们就是相等的。它的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object otherObject)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == otherObject)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (otherObject == <span class="keyword">null</span>)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        <span class="keyword">if</span> (getClass() ！= otherObject.getClass())</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        Employee other = (Employee) otherObject;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> name.equals(other.name)</div><div class="line">            &amp;&amp; salary == other.salary;</div><div class="line">            &amp;&amp; hireDay.equals(other.hireDay);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码中，首先判断两个对象是否同一，其次判断被比较对象是否为null，再次比较两个对象所属的类是否相同（在此处，假定必须类相同才有可能相等），最后比较各个状态是否相等。注意如果状态也是对象的话，<br>则会递归调用它们的equals方法。</p>
+<p>这里要注意的是，Employee对象的name和hireDay等状态是有可能为null的，为了确保在这种情况下程序也是正确的，可以使用Objects.equals方法。调用Objects.equals(a, b)，若两个参数都是null返回true，<br>若其中一个为null返回false，以上都不成立则调用a.equals(b)。因此，上面方法的最后一条语句可修改为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> Objects.equals(name, other.name)</div><div class="line">    &amp;&amp; salary == other.salary;</div><div class="line">    &amp;&amp; Objects.equals(hireDay, other.hireDay);</div></pre></td></tr></table></figure>
+<p>当在扩展类中定义了equals方法时，须首先调用超类的equals方法，如果返回false，则两个对象不可能相等。若返回true，即是超类定义的状态相等。则继续比较子类定义的状态。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/01/hello-world/" data-id="cj3abkb870001mlishtbtz17e" class="article-share-link">Share</a>
       
       
     </footer>
@@ -258,7 +326,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/ArrayList/" data-id="cj06st80l0000ipisrm7wu513" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/ArrayList/" data-id="cj3abkb890002mlis5a5bbkfs" class="article-share-link">Share</a>
       
       
     </footer>
@@ -285,7 +353,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
     </div>
   </div>
 
@@ -298,15 +366,19 @@
       <ul>
         
           <li>
+            <a href="/2017/05/29/RabbitMQ-HelloWorld/">RabbitMQ的Java客户端（一）</a>
+          </li>
+        
+          <li>
             <a href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的研究</a>
           </li>
         
           <li>
-            <a href="/2017/03/01/hello-world/">《Java核心技术（英文版）》读书笔记：Object类的equals方法</a>
+            <a href="/2017/03/01/PushbackInputStream/">Java IO 中的PushbackInputStream类</a>
           </li>
         
           <li>
-            <a href="/2017/03/01/PushbackInputStream/">Java IO 中的PushbackInputStream类</a>
+            <a href="/2017/03/01/hello-world/">《Java核心技术（英文版）》读书笔记：Object类的equals方法</a>
           </li>
         
           <li>

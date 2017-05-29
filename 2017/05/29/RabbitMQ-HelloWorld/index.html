@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>RabbitMQ的Java客户端（一） | My Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="RabbitMQ是一个常用的消息队列中间件，它能接收并转发消息。在消息通信模型中，系统可分为三部分：生产者，消息服务器和消费者。简单地说，生产者程序产生消息，发布到消息服务器；消费者程序连接到消息服务器，订阅到队列中。每当消息到达特定等队列时，RabbitMQ会将其发送给其中一个订阅/监听的消费者。在RabbitMQ中，生产者并不是直接将消息交给某个消息队列的，而是将消息发送给交换器，发送时会指定">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RabbitMQ的Java客户端（一）">
+<meta property="og:url" content="http://yoursite.com/2017/05/29/RabbitMQ-HelloWorld/index.html">
+<meta property="og:site_name" content="My Blog">
+<meta property="og:description" content="RabbitMQ是一个常用的消息队列中间件，它能接收并转发消息。在消息通信模型中，系统可分为三部分：生产者，消息服务器和消费者。简单地说，生产者程序产生消息，发布到消息服务器；消费者程序连接到消息服务器，订阅到队列中。每当消息到达特定等队列时，RabbitMQ会将其发送给其中一个订阅/监听的消费者。在RabbitMQ中，生产者并不是直接将消息交给某个消息队列的，而是将消息发送给交换器，发送时会指定">
+<meta property="og:updated_time" content="2017-05-29T15:55:52.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="RabbitMQ的Java客户端（一）">
+<meta name="twitter:description" content="RabbitMQ是一个常用的消息队列中间件，它能接收并转发消息。在消息通信模型中，系统可分为三部分：生产者，消息服务器和消费者。简单地说，生产者程序产生消息，发布到消息服务器；消费者程序连接到消息服务器，订阅到队列中。每当消息到达特定等队列时，RabbitMQ会将其发送给其中一个订阅/监听的消费者。在RabbitMQ中，生产者并不是直接将消息交给某个消息队列的，而是将消息发送给交换器，发送时会指定">
+  
+    <link rel="alternate" href="/atom.xml" title="My Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">My Blog</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Programmer Article</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-RabbitMQ-HelloWorld" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/05/29/RabbitMQ-HelloWorld/" class="article-date">
+  <time datetime="2017-05-29T15:50:13.000Z" itemprop="datePublished">2017-05-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      RabbitMQ的Java客户端（一）
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>RabbitMQ是一个常用的消息队列中间件，它能接收并转发消息。在消息通信模型中，系统可分为三部分：生产者，消息服务器和消费者。简单地说，生产者程序产生消息，发布到消息服务器；消费者程序连接到消息服务器，订阅到队列中。每当消息到达特定等队列时，RabbitMQ会将其发送给其中一个订阅/监听的消费者。<br>在RabbitMQ中，生产者并不是直接将消息交给某个消息队列的，而是将消息发送给交换器，发送时会指定投递的规则，这些规则称为路由键。交换器中最简单等一种就是direct交换器。它是一个以空白字符串为名称等默认交换器。当声明一个队列时，默认绑定到direct交换器。direct交换器的规则非常简单：如果路由键（队列名）匹配的话，消息就被投递到对应等队列。如下图所示</p>
+<h2 id="Java客户端"><a href="#Java客户端" class="headerlink" title="Java客户端"></a>Java客户端</h2><p>Java是当今流行的服务器应用程序开发语言。RabbitMQ也提供了Java的客户端SDK。用Java实现direct交换器中的生产者示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">package</span> com.wts.helloworld;</div><div class="line"></div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.Channel;</div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.Connection;</div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.ConnectionFactory;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by weitaosheng on 2017/5/1.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Send</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String QUEUE_NAME = <span class="string">"hello"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</div><div class="line">        factory.setHost(<span class="string">"localhost"</span>);</div><div class="line">        Connection connection = factory.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line"></div><div class="line">        channel.queueDeclare(QUEUE_NAME, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</div><div class="line">        String message = <span class="string">"Hello World!"</span>;</div><div class="line">        channel.basicPublish(<span class="string">""</span>, QUEUE_NAME, <span class="keyword">null</span>, message.getBytes());</div><div class="line">        System.out.println(<span class="string">" [x] Sent '"</span> + message + <span class="string">"'"</span>);</div><div class="line"></div><div class="line">        channel.close();</div><div class="line">        connection.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建一个消息生产者等步骤：</p>
+<ol>
+<li>新建连接工厂；</li>
+<li>绑定RabbitMQ服务器地址（默认为localhost，端口5672）；</li>
+<li>获取连接；</li>
+<li>建立频道（channel）；</li>
+<li>声明队列；</li>
+<li>发布消息。</li>
+<li>关闭频道；</li>
+<li>关闭连接。</li>
+</ol>
+<p>客户端示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> com.rabbitmq.client.*;</div><div class="line"></div><div class="line"><span class="keyword">import</span> java.io.IOException;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by weitaosheng on 2017/5/1.</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Recv</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> String QUEUE_NAME = <span class="string">"hello"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        ConnectionFactory factory = <span class="keyword">new</span> ConnectionFactory();</div><div class="line">        factory.setHost(<span class="string">"localhost"</span>);</div><div class="line">        Connection connection = factory.newConnection();</div><div class="line">        Channel channel = connection.createChannel();</div><div class="line"></div><div class="line">        channel.queueDeclare(QUEUE_NAME, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">false</span>, <span class="keyword">null</span>);</div><div class="line">        System.out.println(<span class="string">" [*] Waiting for message. To exit press CTRL+C"</span>);</div><div class="line"></div><div class="line">        Consumer consumer = <span class="keyword">new</span> DefaultConsumer(channel) &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException </span>&#123;</div><div class="line">                String message = <span class="keyword">new</span> String(body, <span class="string">"UTF-8"</span>);</div><div class="line">                System.out.println(<span class="string">" [x] Received '"</span> + message + <span class="string">"'"</span>);</div><div class="line">            &#125;</div><div class="line">        &#125;;</div><div class="line">        channel.basicConsume(QUEUE_NAME, <span class="keyword">true</span>, consumer);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>创建客户端并订阅队列的步骤：</p>
+<ol>
+<li>新建连接工厂；</li>
+<li>绑定RabbitMQ服务器地址（默认为localhost，端口5672）；</li>
+<li>获取连接；</li>
+<li>建立频道（channel）；</li>
+<li>声明队列；</li>
+<li>声明一个消息消费者，本示例中是用一个匿名内部类来扩展了DefaltConsumer类，并重写了handleDelivery方法，该方法定义了接收到消息时进行等处理。</li>
+</ol>
+<p>以下是客户端SDK关键的类和方法：<br>ConnectionFactory：连接工厂关键类，是客户端访问RabbitMQ服务器必须要先构造的类。从Connection的源代码可以看出，ConnectionFactory没有显示定义构造函数，因此使用的是编译器自动生成的默认构造函数。<br>获取连接的函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> Connection <span class="title">newConnection</span><span class="params">()</span> <span class="keyword">throws</span> IOException, TimeoutException </span>&#123;</div><div class="line">    <span class="keyword">return</span> newConnection(<span class="keyword">this</span>.sharedExecutor, Collections.singletonList(<span class="keyword">new</span> Address(getHost(), getPort())));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>查看源码，sharedExecutor是一个ExecutorService的实例。此处为null，也就是没有使用线程池。连接时还需要地址和端口。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function">Channel <span class="title">createChannel</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</div></pre></td></tr></table></figure></p>
+<p>createChannel：生成一个Channel类的实例。Connection是一条真实的TCP连接，Channel是Connection内等一条虚拟连接，它在RabbitMQ中会自动生成唯一的ID。通过一条TCP连接内多个虚拟连接的方式，可以提高性能，节约系统资源，因为TCP连接的创建和销毁是非常昂贵的。<br>Queue.DeclareOk queueDeclare(String queue, boolean durable, boolean exclusive, boolean autoDelete,<br>                             Map<string, object=""> arguments) throws IOException;<br>queueDeclare：声明队列。它的几个参数的含义是：队列名，是否持久化，是否是限制性等队列（仅限于此次连接），是否自动删除消息，其他参数<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">basicPublish</span><span class="params">(String exchange, String routingKey, BasicProperties props, <span class="keyword">byte</span>[] body)</span> <span class="keyword">throws</span> IOException</span>;</div></pre></td></tr></table></figure></string,></p>
+<p>basicPublish：发布消息，几个参数是：交换器名，路由键，是否设置了mandatory参数，消息参数，消息体（用byte数组装载）</p>
+<p>Consumer是代表消费者等接口，DefaultConsumer是Consumer接口的一个默认实现。一般定义消费者只需扩展这个类即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handleDelivery</span><span class="params">(String consumerTag,</span></span></div><div class="line">                           Envelope envelope,</div><div class="line">                           AMQP.BasicProperties properties,</div><div class="line">                           <span class="keyword">byte</span>[] body)</div></pre></td></tr></table></figure></p>
+<p>handleDelivery：消费者接收到消息时的回调方法。它的几个参数是：消费者标签，『信封』信息，消息头内容，消息体</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/05/29/RabbitMQ-HelloWorld/" data-id="cj3abkb8p0004mlisk5w8l8me" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/03/01/Java-synchronized/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Java中synchronized关键字的研究</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/05/29/RabbitMQ-HelloWorld/">RabbitMQ的Java客户端（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的研究</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/PushbackInputStream/">Java IO 中的PushbackInputStream类</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/hello-world/">《Java核心技术（英文版）》读书笔记：Object类的equals方法</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/ArrayList/">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 wts<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+</body>
+</html>
