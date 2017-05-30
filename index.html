@@ -77,7 +77,7 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2017/05/30/Spring Boot快速搭建Web应用/" title="Java中synchronized关键字的研究" itemprop="url">Java中synchronized关键字的研究</a>
+      <a href="/2017/05/30/Spring Boot快速搭建Web应用/" title="Spring Boot快速搭建Web应用" itemprop="url">Spring Boot快速搭建Web应用</a>
   </h1>
   <p class="article-author">By
        
@@ -372,6 +372,73 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/03/01/ArrayList/" title="Java集合中的ArrayList类（一）：构造实例和添加元素" itemprop="url">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
+		
+  <p class="article-time">
+    <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished"> Published 2017-03-01</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。</p>
+<h2 id="无参构造器"><a href="#无参构造器" class="headerlink" title="无参构造器"></a>无参构造器</h2><p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        strings.add(<span class="string">"abc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面看调用构造器以及添加元素的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 用初始的10的容量大小构造一个空的list</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从上述构造器可以看出，无参构造器只是很简单将常量DEFAULTCAPACITY_EMPTY_ELEMENTDATA赋给成员变量elementData。这个成员变量和常量如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Shared empty array instance used for default sized empty instances. We</div><div class="line"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</div><div class="line"> * first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * The array buffer into which the elements of the ArrayList are stored.</div><div class="line"> * The capacity of the ArrayList is the length of this array buffer. Any</div><div class="line"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</div><div class="line"> * will be expanded to DEFAULT_CAPACITY when the first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></div></pre></td></tr></table></figure>
+<p>从注释可以看出，DEFAULTCAPACITY_EMPTY_ELEMENTDATA是一个空的数组实例，用来作为默认大小的空List。它与EMPTY_ELEMENTDATA同时存在，是为了当第一个元素被添加到list中时，能算出要扩展多大的容量。</p>
+<p>elementData是ArrayList中用于实际存储元素的数组。一个ArrayList实例的容量就是这个数组的长度。任何调用了默认构造器生成的ArrayList实例，都执行了elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA，当第一个元素被添加到list中时，都会被扩展到默认的容量大小，即DEFAULT_CAPACITY（10）。</p>
+<p>末尾添加元素的函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Appends the specified element to the end of this list.</div><div class="line">*</div><div class="line">* <span class="doctag">@param</span> e element to be appended to this list</div><div class="line">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    <span class="comment">// 扩容之后将新增的元素加到末尾，同时将list的size加一。</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该方法首先调用了ensureCapacityInternal函数，用于确保容量足以添加一个元素。ensureCapacityInternal方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123; <span class="comment">// 插入“abc”时，minCapacity为1</span></div><div class="line">    <span class="comment">// 当调用无参构造器时，初始存储元素的数组是DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></div><div class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</div><div class="line">        <span class="comment">// 比较参数和默认容量大小，取大者作为扩展多容量</span></div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); <span class="comment">// minCapacity变为10</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后调用了ensureExplicitCapacity函数，继续扩展容量大操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// 检查目标容量是否大于当前数组的实际长度</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述方法继续调用grow函数，完成扩容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Increases the capacity to ensure that it can hold at least the</div><div class="line"> * number of elements specified by the minimum capacity argument.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> minCapacity the desired minimum capacity</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="comment">// 容量扩充增量为当前数组容量大50%</span></div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="comment">// 若扩充后仍达不到目标容量，则直接使用目标容量作为新容量</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="comment">// 若超过最大容量，则调用hugeCapacity函数</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// 调用工具函数扩容，末尾用null补全</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从注释可知，该方法增长容量以确保list至少能保存传入参数大小数量多元素。之后，就可以插入元素“abc”。插入之后，list的size为1，容量为10.</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/03/01/PushbackInputStream/" title="Java IO 中的PushbackInputStream类" itemprop="url">Java IO 中的PushbackInputStream类</a>
   </h1>
   <p class="article-author">By
@@ -463,73 +530,6 @@
 <p>这里要注意的是，Employee对象的name和hireDay等状态是有可能为null的，为了确保在这种情况下程序也是正确的，可以使用Objects.equals方法。调用Objects.equals(a, b)，若两个参数都是null返回true，<br>若其中一个为null返回false，以上都不成立则调用a.equals(b)。因此，上面方法的最后一条语句可修改为</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> Objects.equals(name, other.name)</div><div class="line">    &amp;&amp; salary == other.salary;</div><div class="line">    &amp;&amp; Objects.equals(hireDay, other.hireDay);</div></pre></td></tr></table></figure>
 <p>当在扩展类中定义了equals方法时，须首先调用超类的equals方法，如果返回false，则两个对象不可能相等。若返回true，即是超类定义的状态相等。则继续比较子类定义的状态。</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2017/03/01/ArrayList/" title="Java集合中的ArrayList类（一）：构造实例和添加元素" itemprop="url">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
-		
-  <p class="article-time">
-    <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished"> Published 2017-03-01</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。</p>
-<h2 id="无参构造器"><a href="#无参构造器" class="headerlink" title="无参构造器"></a>无参构造器</h2><p>示例代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        strings.add(<span class="string">"abc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>下面看调用构造器以及添加元素的代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 用初始的10的容量大小构造一个空的list</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从上述构造器可以看出，无参构造器只是很简单将常量DEFAULTCAPACITY_EMPTY_ELEMENTDATA赋给成员变量elementData。这个成员变量和常量如下所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Shared empty array instance used for default sized empty instances. We</div><div class="line"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</div><div class="line"> * first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * The array buffer into which the elements of the ArrayList are stored.</div><div class="line"> * The capacity of the ArrayList is the length of this array buffer. Any</div><div class="line"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</div><div class="line"> * will be expanded to DEFAULT_CAPACITY when the first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></div></pre></td></tr></table></figure>
-<p>从注释可以看出，DEFAULTCAPACITY_EMPTY_ELEMENTDATA是一个空的数组实例，用来作为默认大小的空List。它与EMPTY_ELEMENTDATA同时存在，是为了当第一个元素被添加到list中时，能算出要扩展多大的容量。</p>
-<p>elementData是ArrayList中用于实际存储元素的数组。一个ArrayList实例的容量就是这个数组的长度。任何调用了默认构造器生成的ArrayList实例，都执行了elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA，当第一个元素被添加到list中时，都会被扩展到默认的容量大小，即DEFAULT_CAPACITY（10）。</p>
-<p>末尾添加元素的函数：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Appends the specified element to the end of this list.</div><div class="line">*</div><div class="line">* <span class="doctag">@param</span> e element to be appended to this list</div><div class="line">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    <span class="comment">// 扩容之后将新增的元素加到末尾，同时将list的size加一。</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该方法首先调用了ensureCapacityInternal函数，用于确保容量足以添加一个元素。ensureCapacityInternal方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123; <span class="comment">// 插入“abc”时，minCapacity为1</span></div><div class="line">    <span class="comment">// 当调用无参构造器时，初始存储元素的数组是DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></div><div class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</div><div class="line">        <span class="comment">// 比较参数和默认容量大小，取大者作为扩展多容量</span></div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); <span class="comment">// minCapacity变为10</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>之后调用了ensureExplicitCapacity函数，继续扩展容量大操作：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// 检查目标容量是否大于当前数组的实际长度</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上述方法继续调用grow函数，完成扩容：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Increases the capacity to ensure that it can hold at least the</div><div class="line"> * number of elements specified by the minimum capacity argument.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> minCapacity the desired minimum capacity</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="comment">// 容量扩充增量为当前数组容量大50%</span></div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="comment">// 若扩充后仍达不到目标容量，则直接使用目标容量作为新容量</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="comment">// 若超过最大容量，则调用hugeCapacity函数</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// 调用工具函数扩容，末尾用null补全</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从注释可知，该方法增长容量以确保list至少能保存传入参数大小数量多元素。之后，就可以插入元素“abc”。插入之后，list的size为1，容量为10.</p>
 
         
         
