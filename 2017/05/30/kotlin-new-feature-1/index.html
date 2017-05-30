@@ -26,7 +26,7 @@
 <meta property="og:url" content="http://yoursite.com/2017/05/30/kotlin-new-feature-1/index.html">
 <meta property="og:site_name" content="My Blog">
 <meta property="og:description" content="Kotlin是一门新兴的语言，它可以运行于JVM、JavaScript以及native环境（native正在开发中）。它是由著名软件开发商Jetbrains开发，具备了很多新的特性，能够在开发中提升效率。目前已经成为Android官方支持的开发语言。Kotlin语言中的一切类型都是对象，这与Java不同。虽然Java标榜自己是一门纯粹的面向对象的语言，但由于设计的局限，还是保留了一些非面向对象的元">
-<meta property="og:updated_time" content="2017-05-30T04:18:28.000Z">
+<meta property="og:updated_time" content="2017-05-30T10:02:02.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin的新特性（一）：基本类型">
 <meta name="twitter:description" content="Kotlin是一门新兴的语言，它可以运行于JVM、JavaScript以及native环境（native正在开发中）。它是由著名软件开发商Jetbrains开发，具备了很多新的特性，能够在开发中提升效率。目前已经成为Android官方支持的开发语言。Kotlin语言中的一切类型都是对象，这与Java不同。虽然Java标榜自己是一门纯粹的面向对象的语言，但由于设计的局限，还是保留了一些非面向对象的元">
@@ -112,7 +112,7 @@
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
                 <i class="icon icon-lg icon-chevron-left"></i>
             </a>
-            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="Search">
+            <input type="text" id="key" class="search-input" autocomplete="off" placeholder="输入感兴趣的关键字">
             <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
                 <i class="icon icon-lg icon-search"></i>
             </a>
@@ -147,7 +147,7 @@
     <aside class="post-widget">
         <nav class="post-toc-wrap" id="post-toc">
             <h4>TOC</h4>
-            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Number"><span class="post-toc-number">1.</span> <span class="post-toc-text">Number</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字面常量"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">字面常量</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#下划线分隔位数"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">下划线分隔位数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#宽向扩展"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">宽向扩展</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Characters"><span class="post-toc-number">2.</span> <span class="post-toc-text">Characters</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Booleans"><span class="post-toc-number">3.</span> <span class="post-toc-text">Booleans</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Arrays"><span class="post-toc-number">4.</span> <span class="post-toc-text">Arrays</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字符串字面量"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">字符串字面量</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字符串模板"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">字符串模板</span></a></li></ol></li></ol>
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Number"><span class="post-toc-number">1.</span> <span class="post-toc-text">Number</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字面常量"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">字面常量</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#下划线分隔位数"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">下划线分隔位数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#宽向扩展"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">宽向扩展</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Characters"><span class="post-toc-number">2.</span> <span class="post-toc-text">Characters</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Booleans"><span class="post-toc-number">3.</span> <span class="post-toc-text">Booleans</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Arrays"><span class="post-toc-number">4.</span> <span class="post-toc-text">Arrays</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Strings"><span class="post-toc-number">5.</span> <span class="post-toc-text">Strings</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字符串字面量"><span class="post-toc-number">5.1.</span> <span class="post-toc-text">字符串字面量</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字符串模板"><span class="post-toc-number">5.2.</span> <span class="post-toc-text">字符串模板</span></a></li></ol></li></ol>
         </nav>
     </aside>
     
@@ -194,8 +194,7 @@
 <p>创建数组可以使用arrayOf()方法，并传递数组元素给它作为参数。例如arrayOf(1, 2, 3)就创建了一个数组[1, 2, 3]。arrayOfNulls()函数用于创建一个给定长度的数组，并用null元素填充它。</p>
 <p>Kotlin也有特定的类代表原生类型的数组，如ByteArray、ShortArray、IntArray等。这些类与Array没有继承关系，但有对应的方法和属性集合。如IntArray有对应的工厂函数。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> x: IntArray = intArrayOf(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>) </div><div class="line">x[<span class="number">0</span>] = x[<span class="number">1</span>] + x[<span class="number">2</span>]</div></pre></td></tr></table></figure>
-<p>Strings</p>
-<p>字符串用String类表示。与Java一样，String是不可变类。String的元素是字符，与Java中必须使用charAtIndex()这样一个方法去访问元素不同，Kotlin中可以使用下标运算符[]去访问字符元素。String还能使用for循环很方便地访问。</p>
+<h2 id="Strings"><a href="#Strings" class="headerlink" title="Strings"></a>Strings</h2><p>字符串用String类表示。与Java一样，String是不可变类。String的元素是字符，与Java中必须使用charAtIndex()这样一个方法去访问元素不同，Kotlin中可以使用下标运算符[]去访问字符元素。String还能使用for循环很方便地访问。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">for</span> (c <span class="keyword">in</span> str) &#123; </div><div class="line">    println(c) </div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <h3 id="字符串字面量"><a href="#字符串字面量" class="headerlink" title="字符串字面量"></a>字符串字面量</h3><p>Kotlin有两种字符串字面量：一种是可转义的字符串，它可能含有转义字符，它不能表示在多行，除非使用“+”将不同的字符串连接成一个字符串；另一种是原始（raw）字符串，能在多行表示并能包含任意文本。</p>
 <p>转义字符串：</p>
@@ -211,13 +210,14 @@
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> s = <span class="string">"abc"</span> </div><div class="line"><span class="keyword">val</span> str = <span class="string">"<span class="subst">$s</span>.length is <span class="subst">$&#123;s.length&#125;</span>"</span> <span class="comment">// evaluates to "abc.length is 3"</span></div><div class="line"><span class="string">"""</span></div></pre></td></tr></table></figure>
 <p>模板在原始字符串和转义字符串中都支持。如果你在原始字符串中需要表示美元符号的字面值，可以像下面这样使用。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> price = <span class="string">""" </span></div><div class="line"><span class="subst">$&#123;<span class="string">'$'</span>&#125;</span>9.99 </div><div class="line">"""</div></pre></td></tr></table></figure>
+
         </div>
 
         <blockquote class="post-copyright">
     <div class="content">
         
 <span class="post-time">
-    Last updated: <time datetime="2017-05-30T04:18:28.000Z" itemprop="dateUpdated">2017-05-30 12:18:28</time>
+    最后更新时间：<time datetime="2017-05-30T10:02:02.000Z" itemprop="dateUpdated">2017-05-30 18:02:02</time>
 </span><br>
 
 
@@ -301,7 +301,7 @@
             
                 <span><a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-lg icon-rss"></i></a></span>
             
-            <span>This blog is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</span>
+            <span>博客内容遵循<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">知识共享 署名 - 非商业性 - 相同方式共享 4.0 国际协议</a></span>
         </p>
     </div>
     <div class="bottom">
