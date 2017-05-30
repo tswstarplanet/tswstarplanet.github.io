@@ -1,0 +1,421 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Java中synchronized关键字的研究 | WTS&#39;s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wts">
+    
+
+    
+    <meta name="description" content="Spring Boot是Spring家族一个新兴的成员，它能用于快速构建基于Spring的独立的生产级的应用程序。我们可以将它与Spring平台的其他项目以及第三方库自由组合。大多数基于Spring Boot的应用只需要非常少量的Spring配置。
+Spring Boot的安装与其他Java库类似，Spring Boot也是打包成jar的形式，所以可以在应用中直接将spring-boot-*.ja">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java中synchronized关键字的研究">
+<meta property="og:url" content="http://yoursite.com/2017/05/30/Spring Boot快速搭建Web应用/index.html">
+<meta property="og:site_name" content="WTS's Blog">
+<meta property="og:description" content="Spring Boot是Spring家族一个新兴的成员，它能用于快速构建基于Spring的独立的生产级的应用程序。我们可以将它与Spring平台的其他项目以及第三方库自由组合。大多数基于Spring Boot的应用只需要非常少量的Spring配置。
+Spring Boot的安装与其他Java库类似，Spring Boot也是打包成jar的形式，所以可以在应用中直接将spring-boot-*.ja">
+<meta property="og:updated_time" content="2017-05-30T15:19:34.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java中synchronized关键字的研究">
+<meta name="twitter:description" content="Spring Boot是Spring家族一个新兴的成员，它能用于快速构建基于Spring的独立的生产级的应用程序。我们可以将它与Spring平台的其他项目以及第三方库自由组合。大多数基于Spring Boot的应用只需要非常少量的Spring配置。
+Spring Boot的安装与其他Java库类似，Spring Boot也是打包成jar的形式，所以可以在应用中直接将spring-boot-*.ja">
+
+    
+    <link rel="alternative" href="/atom.xml" title="WTS&#39;s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="WTS&#39;s Blog">WTS&#39;s Blog</a></h1>
+				<h2 class="blog-motto">所有文章都是在学习了相关内容之后写成</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/05/30/Spring Boot快速搭建Web应用/" title="Java中synchronized关键字的研究" itemprop="url">Java中synchronized关键字的研究</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
+		
+  <p class="article-time">
+    <time datetime="2017-05-29T16:00:00.000Z" itemprop="datePublished"> Published 2017-05-30</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Boot的安装"><span class="toc-number">1.</span> <span class="toc-text">Spring Boot的安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用Spring-Boot开发Hello-world级别的web应用"><span class="toc-number">2.</span> <span class="toc-text">用Spring Boot开发Hello world级别的web应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建pom-xml文件"><span class="toc-number">2.1.</span> <span class="toc-text">创建pom.xml文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编写代码"><span class="toc-number">2.2.</span> <span class="toc-text">编写代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#main方法"><span class="toc-number">2.3.</span> <span class="toc-text">main方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行程序"><span class="toc-number">2.4.</span> <span class="toc-text">运行程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<p>Spring Boot是Spring家族一个新兴的成员，它能用于快速构建基于Spring的独立的生产级的应用程序。我们可以将它与Spring平台的其他项目以及第三方库自由组合。大多数基于Spring Boot的应用只需要非常少量的Spring配置。</p>
+<h2 id="Spring-Boot的安装"><a href="#Spring-Boot的安装" class="headerlink" title="Spring Boot的安装"></a>Spring Boot的安装</h2><p>与其他Java库类似，Spring Boot也是打包成jar的形式，所以可以在应用中直接将spring-boot-*.jar引入到classpath中。可以像开发其他Java程序那样开发Spring Boot程序。</p>
+<p>但是在现代的企业级Java开发中，一般会使用专门的构建工具来管理应用的整个生命周期，例如Maven和Gradle。</p>
+<p>当使用Maven时，只需要在pom.xml中配置好相关依赖，就可以在构建过程中自动引用Spring Boot的相关jar。</p>
+<h2 id="用Spring-Boot开发Hello-world级别的web应用"><a href="#用Spring-Boot开发Hello-world级别的web应用" class="headerlink" title="用Spring Boot开发Hello world级别的web应用"></a>用Spring Boot开发Hello world级别的web应用</h2><p>学习任何新技术，都是从开发Hello world级别的程序开始的。用Spring Boot结合Maven开发Hello world级别的Web应用可谓易如反掌。</p>
+<h3 id="创建pom-xml文件"><a href="#创建pom-xml文件" class="headerlink" title="创建pom.xml文件"></a>创建pom.xml文件</h3><p>在磁盘合适的位置新建一个项目文件夹，比如SpringBootTest。从终端进入该文件夹，创建一个pom.xml文件，输入如下内容并保存。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">"http://maven.apache.org/POM/4.0.0"</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></div><div class="line">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span>&gt;</div><div class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.example<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>myproject<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.5.3.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>可以看到引入了spring-boot-starter-parent和spring-boot-starter-web两个starter。Spring Boot是用于简化Spring应用开发的，spring-boot-starter-parent的作用是让maven自动引入默认的一些基础依赖，spring-boot-starter-web则会让maven自动引入web应用需要的依赖。试想一下如果我们不使用Spring Boot，而是手工用Spring，Spring MVC来开发web应用，那需要配置应用上下文，Servlet上下文等，在maven中也要手工将相关依赖都引入进来。配置量会成倍增加。而用Spring Boot则非常轻松，会将配置最少化。</p>
+<p>有了这个pom文件，就可以用maven来构建程序了，可以用mvn package来测试，会看到maven会下载很多依赖，打印出如下信息，就证明能正常构建程序。<br>Building myproject 0.0.1-SNAPSHOT<br>Build Success<br>同时，项目文件夹下出现了target文件夹，该文件夹就是构建出来的可执行文件。<br>可以执行maven dependency:tree命令来打印出项目依赖的树形表示。</p>
+<h3 id="编写代码"><a href="#编写代码" class="headerlink" title="编写代码"></a>编写代码</h3><p>使用Maven管理应用必须使文件夹结构符合maven的约定。所以在SpringBootTest文件夹下新建如下目录结构：<br>src/main/java<br>进入该文件夹，创建文件Example.java，输入如下内容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> org.springframework.boot.*;</div><div class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.*;</div><div class="line"><span class="keyword">import</span> org.springframework.stereotype.*;</div><div class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</div><div class="line"></div><div class="line"><span class="meta">@RestController</span></div><div class="line"><span class="meta">@EnableAutoConfiguration</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Example</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/"</span>)</div><div class="line">    <span class="function">String <span class="title">home</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"Hello World!"</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        SpringApplication.run(Example.class, args);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>@RestController注解标志这个类是一个web Controller，并且是REST的访问方式。</p>
+<p>@RequestMapping提供了“路由”信息。它告诉Spring任何HTTP请求，如果路径符合“/”就会被路由到home方法。因为是用Rest方式访问的Controller，所以直接返回Hello World！字符串，而不是重定向到一个view。</p>
+<p>@EnableAutoConfiguration告诉Spring Boot开发者希望如何配置Spring，依据pom.xml中添加的依赖。因为spring-boot-starter-web依赖会自动添加Tomcat和Spring MVC，自动配置组件就知道开发者在开发一个web应用程序，并据此设置Spring。</p>
+<h3 id="main方法"><a href="#main方法" class="headerlink" title="main方法"></a>main方法</h3><p>这里的main方法就是Java程序中标准的main方法。但该方法代理执行了Spirng Boot的SpringApplication类的run方法，从而启动了Spring去自动配置Tomcat。此处需要将Example.class作为参数传给run方法，告诉SpringApplication它是主要的Spring组件。</p>
+<h3 id="运行程序"><a href="#运行程序" class="headerlink" title="运行程序"></a>运行程序</h3><p>万事俱备只欠东风。用终端进入Spring进入到SpringBootTest（必须是pom.xml所在文件夹），输入如下命令。<br>mvn spring-boot:run</p>
+<p>会看到输出如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"> .   ____          _            __ _ _</div><div class="line"> /\\ / ___&apos;_ __ _ _(_)_ __  __ _ \ \ \ \</div><div class="line">( ( )\___ | &apos;_ | &apos;_| | &apos;_ \/ _` | \ \ \ \</div><div class="line"> \\/  ___)| |_)| | | | | || (_| |  ) ) ) )</div><div class="line">  &apos;  |____| .__|_| |_|_| |_\__, | / / / /</div><div class="line"> =========|_|==============|___/=/_/_/_/</div><div class="line"> :: Spring Boot ::        (v1.5.3.RELEASE)</div><div class="line">…… …</div><div class="line">…… …</div><div class="line">Started Example in 3.239 seconds (JVM running for 21.929)</div></pre></td></tr></table></figure>
+<p>打开浏览器，输入localhost:8080，会看到如下输出<br>Hello World!</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>从上文可以看出，Spring Boot可以在Spring框架的基础上快速搭建应用，例如Web应用。它可以有效减少配置量，而且可以使用内嵌的Web容器，可以高效地开发和测试程序。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2017/05/30/Spring Boot快速搭建Web应用/" data-title="Java中synchronized关键字的研究 | WTS&#39;s Blog" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/05/30/kotlin-new-feature-1/"  title="Kotlin的新特性（一）：基本类型">
+ <strong>下一篇：</strong><br/> 
+ <span>Kotlin的新特性（一）：基本类型
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Spring-Boot的安装"><span class="toc-number">1.</span> <span class="toc-text">Spring Boot的安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#用Spring-Boot开发Hello-world级别的web应用"><span class="toc-number">2.</span> <span class="toc-text">用Spring Boot开发Hello world级别的web应用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#创建pom-xml文件"><span class="toc-number">2.1.</span> <span class="toc-text">创建pom.xml文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#编写代码"><span class="toc-number">2.2.</span> <span class="toc-text">编写代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#main方法"><span class="toc-number">2.3.</span> <span class="toc-text">main方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#运行程序"><span class="toc-number">2.4.</span> <span class="toc-text">运行程序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://github.com/tswstarplanet" target="_blank" title="我的github">我的github</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="wts">wts</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
