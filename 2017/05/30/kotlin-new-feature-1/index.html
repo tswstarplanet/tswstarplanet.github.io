@@ -1,17 +1,16 @@
-
- <!DOCTYPE HTML>
-<html >
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   
-    <title>Kotlin的新特性（一）：基本类型 | My Blog</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
-    
-    <meta name="author" content="wts">
-    
-
-    
-    <meta name="description" content="Kotlin是一门新兴的语言，它可以运行于JVM、JavaScript以及native环境（native正在开发中）。它是由著名软件开发商Jetbrains开发，具备了很多新的特性，能够在开发中提升效率。目前已经成为Android官方支持的开发语言。Kotlin语言中的一切类型都是对象，这与Java不同。虽然Java标榜自己是一门纯粹的面向对象的语言，但由于设计的局限，还是保留了一些非面向对象的元">
+  <title>Kotlin的新特性（一）：基本类型 | My Blog | Programmer Article</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="theme-color" content="#3F51B5">
+  
+  
+  <meta name="keywords" content="">
+  <meta name="description" content="Kotlin是一门新兴的语言，它可以运行于JVM、JavaScript以及native环境（native正在开发中）。它是由著名软件开发商Jetbrains开发，具备了很多新的特性，能够在开发中提升效率。目前已经成为Android官方支持的开发语言。Kotlin语言中的一切类型都是对象，这与Java不同。虽然Java标榜自己是一门纯粹的面向对象的语言，但由于设计的局限，还是保留了一些非面向对象的元">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kotlin的新特性（一）：基本类型">
 <meta property="og:url" content="http://yoursite.com/2017/05/30/kotlin-new-feature-1/index.html">
@@ -21,82 +20,189 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kotlin的新特性（一）：基本类型">
 <meta name="twitter:description" content="Kotlin是一门新兴的语言，它可以运行于JVM、JavaScript以及native环境（native正在开发中）。它是由著名软件开发商Jetbrains开发，具备了很多新的特性，能够在开发中提升效率。目前已经成为Android官方支持的开发语言。Kotlin语言中的一切类型都是对象，这与Java不同。虽然Java标榜自己是一门纯粹的面向对象的语言，但由于设计的局限，还是保留了一些非面向对象的元">
-
-    
+  
     <link rel="alternative" href="/atom.xml" title="My Blog" type="application/atom+xml">
-    
-    
-    <link rel="icon" href="/img/favicon.ico">
-    
-    
-    <link rel="apple-touch-icon" href="/img/jacman.jpg">
-    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
-    
-    <link rel="stylesheet" href="/css/style.css">
+  
+  <meta name="summary" content="abcdefg">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 
-  <body>
-    <header>
+<body>
+  <div id="loading" class="active"></div>
+
+  <nav id="menu" class="hide" >
+   <div class="inner flex-row-vertical">
+  <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-off">
+      <i class="icon icon-lg icon-close"></i>
+  </a>
+  <div class="brand-wrap">
+    <div class="brand">
+      <a href="/" class="avatar"><img src="/img/logo.jpg"></a>
+      <hgroup class="introduce">
+        <h5 class="nickname">wts</h5>
+        <a href="mailto:634206017@qq.com" title="634206017@qq.com" class="mail">634206017@qq.com</a>
+      </hgroup>
+    </div>
+  </div>
+  <div class="scroll-wrap flex-col">
+    <ul class="nav">
       
-<div>
-		
-			<div id="textlogo">
-				<h1 class="site-name"><a href="/" title="My Blog">My Blog</a></h1>
-				<h2 class="blog-motto">Programmer Article</h2>
-			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
-			</a></div>
-			<nav class="animated">
-				<ul>
-					<ul>
-					 
-						<li><a href="/">Home</a></li>
-					
-						<li><a href="/archives">Archives</a></li>
-					
-						<li><a href="/about">About</a></li>
-					
-					<li>
- 					
-					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
-						<label>Search</label>
-						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
-						<input type="hidden" name="q" value="site:yoursite.com">
-					</form>
-					
-					</li>
-				</ul>
-			</nav>			
+          <li class="waves-block waves-effect">
+            <a href="/"  >
+              <i class="icon icon-lg icon-home"></i>
+              主页
+            </a>
+          </li>
+      
+          <li class="waves-block waves-effect">
+            <a href="/archives"  >
+              <i class="icon icon-lg icon-archives"></i>
+              Archives
+            </a>
+          </li>
+      
+          <li class="waves-block waves-effect">
+            <a href="/tags"  >
+              <i class="icon icon-lg icon-tags"></i>
+              Tags
+            </a>
+          </li>
+      
+          <li class="waves-block waves-effect">
+            <a href="https://github.com/yscoder" target="_blank" >
+              <i class="icon icon-lg icon-github"></i>
+              Github
+            </a>
+          </li>
+      
+          <li class="waves-block waves-effect">
+            <a href="http://www.weibo.com/ysweb" target="_blank" >
+              <i class="icon icon-lg icon-weibo"></i>
+              Weibo
+            </a>
+          </li>
+      
+          <li class="waves-block waves-effect">
+            <a href="/404"  >
+              <i class="icon icon-lg icon-link"></i>
+              测试
+            </a>
+          </li>
+      
+    </ul>
+
+    <footer class="footer">
+  <p><a rel="license" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0;vertical-align:middle;" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAPCAMAAABEF7i9AAAAllBMVEUAAAD///+rsapERER3d3eIiIjMzMzu7u4iIiKUmZO6v7rKzsoODg4RERFVVVUNDQ0NDg0PEA8zMzNLTEtbXltmZmZydnF9gn2AgICPkI+ZmZmqqqq7u7vFxsXIzMgNDQwZGRkgICAhISEkJSMnKCcuMC4xMzE5Ozk7PTtBQkFCQkJDQ0Nna2eGhoaHh4ezuLLGysbd3d1wVGpAAAAA4UlEQVR42q2T1xqCMAyFk7QsBQeKA9x7j/d/OSm22CpX0nzcpA1/T05aAOuBVkMAScQFHLnEwoCo2f1TnQIGoVMewjZEjVFN4GH1Ue1Cn2jWqwfsOOj6wDwGvotsl/c8lv7KIq1eLOsT0HMFHMIE/RZyHnlphryT9zyV+8WH5e8yQw3wnQvgAFxPTKUVi555SHR/lOfLMgVTeDlSfN+TaoUsiTyeIm+bCkHvCA2FUKG48LDtYBZBknsYP/G8NTw0gaaHyuQf4H5pecrB/FYCT2sL9zAfy1Xyjou6L8X2W7YcLyBZCRtnq/zfAAAAAElFTkSuQmCC" /></a></p>
+  <p>My Blog &copy; 2017</p>
+  <p>Power by <a href="http://hexo.io/" target="_blank">Hexo</a> Theme
+  <a href="https://github.com/yscoder/hexo-theme-indigo" target="_blank">indigo</a></p>
+  <a href="/atom.xml" target="_blank" class="rss" title="rss"><i class="icon icon-2x icon-rss-square"></i></a>
+</footer>
+
+  </div>
 </div>
-    </header>
-    <div id="container">
-      <div id="main" class="post" itemscope itemprop="blogPost">
-  
-	<article itemprop="articleBody"> 
-		<header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2017/05/30/kotlin-new-feature-1/" title="Kotlin的新特性（一）：基本类型" itemprop="url">Kotlin的新特性（一）：基本类型</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
-		
-  <p class="article-time">
-    <time datetime="2017-05-29T16:00:00.000Z" itemprop="datePublished"> Published 2017-05-30</time>
-    
-  </p>
+
+  </nav>
+  <main id="main">
+    <header class="top-header" id="header">
+    <div class="flex-row">
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light on" id="menu-toggle">
+          <i class="icon icon-lg icon-navicon"></i>
+        </a>
+        <div class="flex-col header-title ellipsis">Kotlin的新特性（一）：基本类型</div>
+        
+        <div class="search-wrap" id="search-wrap">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="back">
+                <i class="icon icon-lg icon-chevron-left"></i>
+            </a>
+            <input type="text" id="key" class="search-input " autocomplete="off" placeholder="输入感兴趣的关键字">
+            <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="search">
+                <i class="icon icon-lg icon-search"></i>
+            </a>
+        </div>
+        
+        
+        <a href="javascript:;" class="header-icon waves-effect waves-circle waves-light" id="menu-share">
+            <i class="icon icon-lg icon-share-alt"></i>
+        </a>
+        
+    </div>
 </header>
-	<div class="article-content">
-		
-		<div id="toc" class="toc-article">
-			<strong class="toc-title">Contents</strong>
-		
-			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Number"><span class="toc-number">1.</span> <span class="toc-text">Number</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字面常量"><span class="toc-number">1.1.</span> <span class="toc-text">字面常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下划线分隔位数"><span class="toc-number">1.2.</span> <span class="toc-text">下划线分隔位数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#宽向扩展"><span class="toc-number">1.3.</span> <span class="toc-text">宽向扩展</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Characters"><span class="toc-number">2.</span> <span class="toc-text">Characters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Booleans"><span class="toc-number">3.</span> <span class="toc-text">Booleans</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Arrays"><span class="toc-number">4.</span> <span class="toc-text">Arrays</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串字面量"><span class="toc-number">4.1.</span> <span class="toc-text">字符串字面量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串模板"><span class="toc-number">4.2.</span> <span class="toc-text">字符串模板</span></a></li></ol></li></ol>
-		
-		</div>
-		
-		<p>Kotlin是一门新兴的语言，它可以运行于JVM、JavaScript以及native环境（native正在开发中）。它是由著名软件开发商Jetbrains开发，具备了很多新的特性，能够在开发中提升效率。目前已经成为Android官方支持的开发语言。<br>Kotlin语言中的一切类型都是对象，这与Java不同。虽然Java标榜自己是一门纯粹的面向对象的语言，但由于设计的局限，还是保留了一些非面向对象的元素，最明显的就是在Java中，int、float、double、long、char等基本类型不是类，而是原生类型（primitive types）。为了补救这个缺陷，Java开发了对应的包装类型Integer、Float、Double、Long、Chararater等。<br>Kotlin吸收了C#等语言的设计思想，将上述基本类型内置为类，它们具有自己的成员函数和成员属性。这些基本类型包括：数字类型（numbers），字符类型（characters），布尔类型（booleans）和数组类型（arrays）。</p>
+<header class="content-header">
+  <div class="container">
+    <h1 class="author">Kotlin的新特性（一）：基本类型</h1>
+    <h5 class="subtitle">
+        
+            <time datetime="2017-05-29T16:00:00.000Z" itemprop="datePublished" class="page-time">
+  2017-05-30
+</time>
+
+
+        
+    </h5>
+  </div>
+</header>
+
+    <div class="container body-wrap">
+      <article id="post-kotlin-new-feature-1" 
+  class="article article-type-post" itemprop="blogPost">
+    <div class="post-meta flex-row">
+        
+    </div>
+    <div class="post-body">
+        <aside class="post-widget" id="post-widget">
+
+            
+            <div class="post-share" id="post-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+            
+
+            
+            <nav class="post-toc-wrap" id="post-toc">
+            <ol class="post-toc"><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Number"><span class="post-toc-number">1.</span> <span class="post-toc-text">Number</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字面常量"><span class="post-toc-number">1.1.</span> <span class="post-toc-text">字面常量</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#下划线分隔位数"><span class="post-toc-number">1.2.</span> <span class="post-toc-text">下划线分隔位数</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#宽向扩展"><span class="post-toc-number">1.3.</span> <span class="post-toc-text">宽向扩展</span></a></li></ol></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Characters"><span class="post-toc-number">2.</span> <span class="post-toc-text">Characters</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Booleans"><span class="post-toc-number">3.</span> <span class="post-toc-text">Booleans</span></a></li><li class="post-toc-item post-toc-level-2"><a class="post-toc-link" href="#Arrays"><span class="post-toc-number">4.</span> <span class="post-toc-text">Arrays</span></a><ol class="post-toc-child"><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字符串字面量"><span class="post-toc-number">4.1.</span> <span class="post-toc-text">字符串字面量</span></a></li><li class="post-toc-item post-toc-level-3"><a class="post-toc-link" href="#字符串模板"><span class="post-toc-number">4.2.</span> <span class="post-toc-text">字符串模板</span></a></li></ol></li></ol>
+            </nav>
+            
+        </aside>
+
+        <div class="post-main">
+
+            <div class="post-content" id="post-content" itemprop="postContent">
+            <p>Kotlin是一门新兴的语言，它可以运行于JVM、JavaScript以及native环境（native正在开发中）。它是由著名软件开发商Jetbrains开发，具备了很多新的特性，能够在开发中提升效率。目前已经成为Android官方支持的开发语言。<br>Kotlin语言中的一切类型都是对象，这与Java不同。虽然Java标榜自己是一门纯粹的面向对象的语言，但由于设计的局限，还是保留了一些非面向对象的元素，最明显的就是在Java中，int、float、double、long、char等基本类型不是类，而是原生类型（primitive types）。为了补救这个缺陷，Java开发了对应的包装类型Integer、Float、Double、Long、Chararater等。<br>Kotlin吸收了C#等语言的设计思想，将上述基本类型内置为类，它们具有自己的成员函数和成员属性。这些基本类型包括：数字类型（numbers），字符类型（characters），布尔类型（booleans）和数组类型（arrays）。</p>
 <h2 id="Number"><a href="#Number" class="headerlink" title="Number"></a>Number</h2><p>Kotlin中的数字类型与Java类似，包括Double、Float、Long、Int、Short、Byte等类型。如上文所述，它们都是类。</p>
 <h3 id="字面常量"><a href="#字面常量" class="headerlink" title="字面常量"></a>字面常量</h3><p>Kotlin中的字面常量（literal constants）与Java类似，Int类型支持十进制，直接用普通十进制表示即可；Long类型则需跟上L后缀，如123L表示一个Long型常数，值是123。十六进制加0x前缀，如0x0F表示十六进制数，值是15。二进制加0b前缀，如0b00001011表示二进制数，值是11。Kotlin中不支持八进制数。<br>Kotlin支持通用的浮点数表示法，默认是Double类型，如123.5，123.5e10，如果是Float类型，需要加f或F后缀，如123.5f。</p>
 <h3 id="下划线分隔位数"><a href="#下划线分隔位数" class="headerlink" title="下划线分隔位数"></a>下划线分隔位数</h3><p>Kotlin支持在数字常量中使用下划线分隔数位。这能使位数较多的数字具有更强的可读性。</p>
@@ -134,303 +240,172 @@
 <p>或者是一个用大括号包裹的任意的表达式。</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> s = <span class="string">"abc"</span> </div><div class="line"><span class="keyword">val</span> str = <span class="string">"<span class="subst">$s</span>.length is <span class="subst">$&#123;s.length&#125;</span>"</span> <span class="comment">// evaluates to "abc.length is 3"</span></div><div class="line"><span class="string">"""</span></div></pre></td></tr></table></figure>
 <p>模板在原始字符串和转义字符串中都支持。如果你在原始字符串中需要表示美元符号的字面值，可以像下面这样使用。</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> price = <span class="string">""" </span></div><div class="line"><span class="subst">$&#123;<span class="string">'$'</span>&#125;</span>9.99 </div><div class="line">"""</div></pre></td></tr></table></figure>  
-	</div>
-		<footer class="article-footer clearfix">
-<div class="article-catetags">
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">val</span> price = <span class="string">""" </span></div><div class="line"><span class="subst">$&#123;<span class="string">'$'</span>&#125;</span>9.99 </div><div class="line">"""</div></pre></td></tr></table></figure>
 
+            
+            <div class="post-reward">
+                <a id="rewardBtn" href="javascript:;" class="post-reward-btn waves-effect waves-circle waves-light">赏</a>
+            </div>
+            
+            
+            <blockquote>
+                <p>
+                本文地址：
+                <a href="http://yoursite.com/2017/05/30/kotlin-new-feature-1/" target="_blank" rel="external">http://yoursite.com/2017/05/30/kotlin-new-feature-1/</a>
+                </p>
+                <footer><cite><a href="http://yoursite.com">@My Blog</a></cite></footer>
+            </blockquote>
+            </div>
+            
+<nav class="post-nav">
+  
 
-</div>
-
-
-
-	<div class="article-share" id="share">
-	
-	  <div data-url="http://yoursite.com/2017/05/30/kotlin-new-feature-1/" data-title="Kotlin的新特性（一）：基本类型 | My Blog" data-tsina="null" class="share clearfix">
-	  </div>
-	
-	</div>
-
-
-</footer>
-
-   	       
-	</article>
-	
-<nav class="article-nav clearfix">
- 
-
-<div class="next">
-<a href="/2017/05/29/RabbitMQ-HelloWorld/"  title="RabbitMQ的Java客户端（一）">
- <strong>下一篇：</strong><br/> 
- <span>RabbitMQ的Java客户端（一）
-</span>
-</a>
-</div>
-
+  
+    <div class="waves-block waves-effect next fr">
+      <a href="/2017/05/29/RabbitMQ-HelloWorld/" id="post-next" class="post-nav-link">
+        <div class="tips">Next <i class="icon icon-angle-right icon-lg icon-pl"></i></div>
+        <h4 class="title">RabbitMQ的Java客户端（一）</h4>
+      </a>
+    </div>
+  
 </nav>
 
-	
 
-</div>  
-      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+            
+            
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="kotlin-new-feature-1" data-title="Kotlin的新特性（一）：基本类型" data-url="http://yoursite.com/2017/05/30/kotlin-new-feature-1/index.html"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"ysblog"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
 
-  <div id="toc" class="toc-aside">
-  <strong class="toc-title">Contents</strong>
- 
- <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Number"><span class="toc-number">1.</span> <span class="toc-text">Number</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字面常量"><span class="toc-number">1.1.</span> <span class="toc-text">字面常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#下划线分隔位数"><span class="toc-number">1.2.</span> <span class="toc-text">下划线分隔位数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#宽向扩展"><span class="toc-number">1.3.</span> <span class="toc-text">宽向扩展</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Characters"><span class="toc-number">2.</span> <span class="toc-text">Characters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Booleans"><span class="toc-number">3.</span> <span class="toc-text">Booleans</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Arrays"><span class="toc-number">4.</span> <span class="toc-text">Arrays</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串字面量"><span class="toc-number">4.1.</span> <span class="toc-text">字符串字面量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字符串模板"><span class="toc-number">4.2.</span> <span class="toc-text">字符串模板</span></a></li></ol></li></ol>
- 
-  </div>
-
-<div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
-<aside class="clearfix">
-
-  
 
 
-  
 
-  
 
-  <div class="linkslist">
-  <p class="asidetitle">Links</p>
-    <ul>
+        </div>
+    </div>
+</article>
+
+<div id="reward" class="reward-lay">
+    <a class="reward-off" id="rewardOff" href="javascript:;"><i class="icon icon-close"></i></a>
+    <h3 class="reward-title">
+        <i class="icon icon-quote-left"></i>
+        谢谢大爷~
+        <i class="icon icon-quote-right"></i>
+    </h3>
+    <ul class="reward-items">
         
-          <li>
-            
-            	<a href="https://github.com/tswstarplanet" target="_blank" title="我的github">我的github</a>
-            
-          </li>
+        <li>
+            <img src="/img/wechat.jpg" title="微信打赏二维码" alt="微信打赏二维码">
+            <p>微信</p>
+        </li>
+        
+
+        
+        <li>
+            <img src="/img/alipay.jpg" title="支付宝打赏二维码" alt="支付宝打赏二维码">
+            <p>支付宝</p>
+        </li>
         
     </ul>
 </div>
 
-</aside>
-</div>
     </div>
-    <footer><div id="footer" >
-	
-	
-	<div class="social-font" class="clearfix">
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	</div>
-			
-		
-
-		<p class="copyright">
-		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
-		
-		<a href="/about" target="_blank" title="wts">wts</a>
-		
-		
-		</p>
-</div>
-</footer>
-    <script src="/js/jquery-2.0.3.min.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
-<script src="/js/gallery.js"></script>
-<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
-
-<script type="text/javascript">
-$(document).ready(function(){ 
-  $('.navbar').click(function(){
-    $('header nav').toggleClass('shownav');
-  });
-  var myWidth = 0;
-  function getSize(){
-    if( typeof( window.innerWidth ) == 'number' ) {
-      myWidth = window.innerWidth;
-    } else if( document.documentElement && document.documentElement.clientWidth) {
-      myWidth = document.documentElement.clientWidth;
-    };
-  };
-  var m = $('#main'),
-      a = $('#asidepart'),
-      c = $('.closeaside'),
-      o = $('.openaside');
-  c.click(function(){
-    a.addClass('fadeOut').css('display', 'none');
-    o.css('display', 'block').addClass('fadeIn');
-    m.addClass('moveMain');
-  });
-  o.click(function(){
-    o.css('display', 'none').removeClass('beforeFadeIn');
-    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
-    m.removeClass('moveMain');
-  });
-  $(window).scroll(function(){
-    o.css("top",Math.max(80,260-$(this).scrollTop()));
-  });
-  
-  $(window).resize(function(){
-    getSize(); 
-    if (myWidth >= 1024) {
-      $('header nav').removeClass('shownav');
-    }else{
-      m.removeClass('moveMain');
-      a.css('display', 'block').removeClass('fadeOut');
-      o.css('display', 'none');
-      
-      $('#toc.toc-aside').css('display', 'none');
-        
-    }
-  });
-});
-</script>
-
-<script type="text/javascript">
-$(document).ready(function(){ 
-  var ai = $('.article-content>iframe'),
-      ae = $('.article-content>embed'),
-      t  = $('#toc'),
-      ta = $('#toc.toc-aside'),
-      o  = $('.openaside'),
-      c  = $('.closeaside');
-  if(ai.length>0){
-    ai.wrap('<div class="video-container" />');
-  };
-  if(ae.length>0){
-   ae.wrap('<div class="video-container" />');
-  };
-  c.click(function(){
-    ta.css('display', 'block').addClass('fadeIn');
-  });
-  o.click(function(){
-    ta.css('display', 'none');
-  });
-  $(window).scroll(function(){
-    ta.css("top",Math.max(140,320-$(this).scrollTop()));
-  });
-});
-</script>
-
-
-<script type="text/javascript">
-$(document).ready(function(){ 
-  var $this = $('.share'),
-      url = $this.attr('data-url'),
-      encodedUrl = encodeURIComponent(url),
-      title = $this.attr('data-title'),
-      tsina = $this.attr('data-tsina'),
-      description = $this.attr('description');
-  var html = [
-  '<div class="hoverqrcode clearfix"></div>',
-  '<a class="overlay" id="qrcode"></a>',
-  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
-  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
-  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
-  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
-  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
-  '<span title="Share to"></span>'
-  ].join('');
-  $this.append(html);
-
-  $('.hoverqrcode').hide();
-
-  var myWidth = 0;
-  function updatehoverqrcode(){
-    if( typeof( window.innerWidth ) == 'number' ) {
-      myWidth = window.innerWidth;
-    } else if( document.documentElement && document.documentElement.clientWidth) {
-      myWidth = document.documentElement.clientWidth;
-    };
-    var qrsize = myWidth > 1024 ? 200:100;
-    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
-    var p = $('.article-share-qrcode').position();
-    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
-                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
-                          .qrcode(options);
-  };
-  $(window).resize(function(){
-    $('.hoverqrcode').hide();
-  });
-  $('.article-share-qrcode').click(function(){
-    updatehoverqrcode();
-    $('.hoverqrcode').toggle();
-  });
-  $('.article-share-qrcode').hover(function(){}, function(){
-      $('.hoverqrcode').hide();
-  });
-});   
-</script>
-
-
-
-
-
-
-
-
-
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
-<script type="text/javascript">
-$(document).ready(function(){ 
-  $('.article-content').each(function(i){
-    $(this).find('img').each(function(){
-      if ($(this).parent().hasClass('fancybox')) return;
-      var alt = this.alt;
-      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
-      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
-    });
-    $(this).find('.fancybox').each(function(){
-      $(this).attr('rel', 'article' + i);
-    });
-  });
-  if($.fancybox){
-    $('.fancybox').fancybox();
-  }
-}); 
-</script>
-
-
-
-<!-- Analytics Begin -->
-
-
+  </main>
+<div class="mask" id="mask"></div>
+<a href="javascript:;" id="gotop" class="waves-effect waves-circle waves-light"><span class="icon icon-lg icon-chevron-up"></span></a>
 
 <script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
+var BLOG_SHARE = {
+    title: "Kotlin的新特性（一）：基本类型",
+    pic: "/img/logo.jpg",
+    summary: document.getElementsByName('summary')[0].content,
+    url: "http://yoursite.com/2017/05/30/kotlin-new-feature-1/index.html"
+};
+</script>
+<div class="global-share" id="global-share">
+    <div class="tit">分享到：</div>
+    <ul class="reset share-icons">
+      <li>
+        <a class="weibo share-sns" href="javascript:;" data-title="微博" data-service="tsina">
+          <i class="icon icon-weibo"></i>
+        </a>
+      </li>
+      <li>
+        <a class="weixin share-sns" href="javascript:;" data-title="微信" data-service="weixin">
+          <i class="icon icon-weixin"></i>
+        </a>
+      </li>
+      <li>
+        <a class="qq share-sns" href="javascript:;" data-title=" QQ" data-service="cqq">
+          <i class="icon icon-qq"></i>
+        </a>
+      </li>
+      <li>
+        <a class="facebook share-sns" href="javascript:;" data-title=" Facebook" data-service="fb">
+          <i class="icon icon-facebook"></i>
+        </a>
+      </li>
+      <li>
+        <a class="twitter share-sns" href="javascript:;" data-title=" Twitter" data-service="twitter">
+          <i class="icon icon-twitter"></i>
+        </a>
+      </li>
+      <li>
+        <a class="douban share-sns" href="javascript:;" data-title="豆瓣" data-service="douban">
+          豆
+        </a>
+      </li>
+    </ul>
+ </div>
+
+
+<script src="//cdn.bootcss.com/node-waves/0.7.4/waves.min.js"></script>
+
+<script src="/js/main.js"></script>
+
+
+
+<div class="search-panel" id="search-panel">
+    <ul class="search-result" id="search-result"></ul>
+</div>
+<script type="text/template" id="search-tpl">
+<li class="item">
+    <a href="/{path}" class="waves-block waves-effect">
+        <div class="title ellipsis" title="{title}">{title}</div>
+        <div class="flex-row flex-middle">
+            <div class="tags ellipsis">
+                {tags}
+            </div>
+            <time class="flex-col time">{date}</time>
+        </div>
+    </a>
+</li>
 </script>
 
+<script src="/js/search.js"></script>
 
 
-<!-- Analytics End -->
-
-<!-- Totop Begin -->
-
-	<div id="totop">
-	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
-	</div>
-	<script src="/js/totop.js"></script>
-
-<!-- Totop End -->
-
-<!-- MathJax Begin -->
-<!-- mathjax config similar to math.stackexchange -->
 
 
-<!-- MathJax End -->
 
-<!-- Tiny_search Begin -->
 
-<!-- Tiny_search End -->
 
-  </body>
+
+
+</body>
 </html>
