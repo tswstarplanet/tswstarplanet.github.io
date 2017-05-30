@@ -55,9 +55,9 @@
       </nav>
       <nav id="sub-nav">
         
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="Flux RSS"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="Rechercher"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
@@ -126,52 +126,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/05/29/RabbitMQ-HelloWorld/" data-id="cj3b1h2r90003ynisnkgst5r0" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-Java-synchronized" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/03/01/Java-synchronized/" class="article-date">
-  <time datetime="2017-03-01T12:23:47.000Z" itemprop="datePublished">2017-03-01</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的研究</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在Java中，每一个线程都有一个内部锁。当我们使用<strong>synchronized</strong>关键字时，就是利用这个内部锁来实现线程对某个对象的锁定控制。<br>那么，如果某个对象中有两个方法，方法一和方法二都使用了synchronized关键字。如果线程一执行该对象的方法一，线程二执行该对象的方法二。如果线程1一直不释放该对象的内部锁的话，那么线程二应该无法执行该对象的方法二。下面就用代码来验证一下。<br>首先，定义一个Task类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> corejava.chapter14;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskC</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            System.out.println(<span class="string">"我是方法1"</span>);</div><div class="line">            Thread.sleep(<span class="number">10000</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            System.out.println(<span class="string">"我是方法2"</span>);</div><div class="line">            Thread.sleep(<span class="number">10000</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>method1每隔10秒就会输出一句“我是方法1”。method2每隔10秒就会输出一句“我是方法2”。两个方法都使用了synchronized关键字。  </p>
-<p>再定义两个执行类ExecutorC1和Executor2。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> corejava.chapter14;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExecutorC1</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> TaskC taskC;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ExecutorC1</span><span class="params">(TaskC taskC)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.taskC = taskC;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            taskC.method1();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> corejava.chapter14;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExecutorC2</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> TaskC taskC;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ExecutorC2</span><span class="params">(TaskC taskC)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.taskC = taskC;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            taskC.method2();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>执行对象1和执行对象2都使用同一个taskC去实例化，这样他们之间就会存在竞争。当thread1执行taskC的method1时，会一直持有taskC的内部锁，因此thread2将一直处于阻塞状态。  </p>
-<p>下面是运行输出结果<br><img src="/images/synchronized.png" alt="">  </p>
-<p>可见，确实如我们所料，虽然两个线程要执行的是不同的方法，但因为线程1一直“霸占”着内部锁，所以线程2始终在阻塞状态，得不到执行。  </p>
-<p>所以，如果我们在对某个类要使用synchronized关键字进行锁定控制时，一定要牢记它使用的是该类的内部锁。它是唯一的。当多个方法都用它来进行控制时，一定要考虑这一点。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/Java-synchronized/" data-id="cj3b1h2r60001ynisof2yx4nj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/05/29/RabbitMQ-HelloWorld/" data-id="cj3b1vxuk0004i8isi9wmfykt" class="article-share-link">Partager</a>
       
       
     </footer>
@@ -245,7 +200,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/kotlin-new-feature-1/" data-id="cj3b1h2rc0005ynisk93pvetq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/kotlin-new-feature-1/" data-id="cj3b1vxui0002i8isw4kpt6dk" class="article-share-link">Partager</a>
       
       
     </footer>
@@ -255,10 +210,10 @@
 
 
   
-    <article id="post-ArrayList" class="article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-Java-synchronized" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2017/03/01/ArrayList/" class="article-date">
-  <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished">2017-03-01</time>
+    <a href="/2017/03/01/Java-synchronized/" class="article-date">
+  <time datetime="2017-03-01T12:23:47.000Z" itemprop="datePublished">2017-03-01</time>
 </a>
     
   </div>
@@ -269,7 +224,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/01/ArrayList/">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
+      <a class="article-title" href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的研究</a>
     </h1>
   
 
@@ -277,29 +232,20 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。</p>
-<h2 id="无参构造器"><a href="#无参构造器" class="headerlink" title="无参构造器"></a>无参构造器</h2><p>示例代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        strings.add(<span class="string">"abc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>下面看调用构造器以及添加元素的代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 用初始的10的容量大小构造一个空的list</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从上述构造器可以看出，无参构造器只是很简单将常量DEFAULTCAPACITY_EMPTY_ELEMENTDATA赋给成员变量elementData。这个成员变量和常量如下所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Shared empty array instance used for default sized empty instances. We</div><div class="line"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</div><div class="line"> * first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * The array buffer into which the elements of the ArrayList are stored.</div><div class="line"> * The capacity of the ArrayList is the length of this array buffer. Any</div><div class="line"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</div><div class="line"> * will be expanded to DEFAULT_CAPACITY when the first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></div></pre></td></tr></table></figure>
-<p>从注释可以看出，DEFAULTCAPACITY_EMPTY_ELEMENTDATA是一个空的数组实例，用来作为默认大小的空List。它与EMPTY_ELEMENTDATA同时存在，是为了当第一个元素被添加到list中时，能算出要扩展多大的容量。</p>
-<p>elementData是ArrayList中用于实际存储元素的数组。一个ArrayList实例的容量就是这个数组的长度。任何调用了默认构造器生成的ArrayList实例，都执行了elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA，当第一个元素被添加到list中时，都会被扩展到默认的容量大小，即DEFAULT_CAPACITY（10）。</p>
-<p>末尾添加元素的函数：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Appends the specified element to the end of this list.</div><div class="line">*</div><div class="line">* <span class="doctag">@param</span> e element to be appended to this list</div><div class="line">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    <span class="comment">// 扩容之后将新增的元素加到末尾，同时将list的size加一。</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该方法首先调用了ensureCapacityInternal函数，用于确保容量足以添加一个元素。ensureCapacityInternal方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123; <span class="comment">// 插入“abc”时，minCapacity为1</span></div><div class="line">    <span class="comment">// 当调用无参构造器时，初始存储元素的数组是DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></div><div class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</div><div class="line">        <span class="comment">// 比较参数和默认容量大小，取大者作为扩展多容量</span></div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); <span class="comment">// minCapacity变为10</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>之后调用了ensureExplicitCapacity函数，继续扩展容量大操作：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// 检查目标容量是否大于当前数组的实际长度</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上述方法继续调用grow函数，完成扩容：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Increases the capacity to ensure that it can hold at least the</div><div class="line"> * number of elements specified by the minimum capacity argument.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> minCapacity the desired minimum capacity</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="comment">// 容量扩充增量为当前数组容量大50%</span></div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="comment">// 若扩充后仍达不到目标容量，则直接使用目标容量作为新容量</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="comment">// 若超过最大容量，则调用hugeCapacity函数</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// 调用工具函数扩容，末尾用null补全</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从注释可知，该方法增长容量以确保list至少能保存传入参数大小数量多元素。之后，就可以插入元素“abc”。插入之后，list的size为1，容量为10.</p>
+        <p>在Java中，每一个线程都有一个内部锁。当我们使用<strong>synchronized</strong>关键字时，就是利用这个内部锁来实现线程对某个对象的锁定控制。<br>那么，如果某个对象中有两个方法，方法一和方法二都使用了synchronized关键字。如果线程一执行该对象的方法一，线程二执行该对象的方法二。如果线程1一直不释放该对象的内部锁的话，那么线程二应该无法执行该对象的方法二。下面就用代码来验证一下。<br>首先，定义一个Task类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> corejava.chapter14;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskC</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method1</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            System.out.println(<span class="string">"我是方法1"</span>);</div><div class="line">            Thread.sleep(<span class="number">10000</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">method2</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</div><div class="line"></div><div class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">            System.out.println(<span class="string">"我是方法2"</span>);</div><div class="line">            Thread.sleep(<span class="number">10000</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>method1每隔10秒就会输出一句“我是方法1”。method2每隔10秒就会输出一句“我是方法2”。两个方法都使用了synchronized关键字。  </p>
+<p>再定义两个执行类ExecutorC1和Executor2。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> corejava.chapter14;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExecutorC1</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> TaskC taskC;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ExecutorC1</span><span class="params">(TaskC taskC)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.taskC = taskC;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            taskC.method1();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> corejava.chapter14;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExecutorC2</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> TaskC taskC;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ExecutorC2</span><span class="params">(TaskC taskC)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.taskC = taskC;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            taskC.method2();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>执行对象1和执行对象2都使用同一个taskC去实例化，这样他们之间就会存在竞争。当thread1执行taskC的method1时，会一直持有taskC的内部锁，因此thread2将一直处于阻塞状态。  </p>
+<p>下面是运行输出结果<br><img src="/images/synchronized.png" alt="">  </p>
+<p>可见，确实如我们所料，虽然两个线程要执行的是不同的方法，但因为线程1一直“霸占”着内部锁，所以线程2始终在阻塞状态，得不到执行。  </p>
+<p>所以，如果我们在对某个类要使用synchronized关键字进行锁定控制时，一定要牢记它使用的是该类的内部锁。它是唯一的。当多个方法都用它来进行控制时，一定要考虑这一点。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/ArrayList/" data-id="cj3b1h2r20000ynisqxdrcbbr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/Java-synchronized/" data-id="cj3b1vxuj0003i8isw35yiag8" class="article-share-link">Partager</a>
       
       
     </footer>
@@ -353,7 +299,61 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/PushbackInputStream/" data-id="cj3b1h2r80002ynisec6pqkmv" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/PushbackInputStream/" data-id="cj3b1vxuc0000i8is3paa23ud" class="article-share-link">Partager</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-ArrayList" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/01/ArrayList/" class="article-date">
+  <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished">2017-03-01</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/01/ArrayList/">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。</p>
+<h2 id="无参构造器"><a href="#无参构造器" class="headerlink" title="无参构造器"></a>无参构造器</h2><p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        strings.add(<span class="string">"abc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面看调用构造器以及添加元素的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 用初始的10的容量大小构造一个空的list</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从上述构造器可以看出，无参构造器只是很简单将常量DEFAULTCAPACITY_EMPTY_ELEMENTDATA赋给成员变量elementData。这个成员变量和常量如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Shared empty array instance used for default sized empty instances. We</div><div class="line"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</div><div class="line"> * first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * The array buffer into which the elements of the ArrayList are stored.</div><div class="line"> * The capacity of the ArrayList is the length of this array buffer. Any</div><div class="line"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</div><div class="line"> * will be expanded to DEFAULT_CAPACITY when the first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></div></pre></td></tr></table></figure>
+<p>从注释可以看出，DEFAULTCAPACITY_EMPTY_ELEMENTDATA是一个空的数组实例，用来作为默认大小的空List。它与EMPTY_ELEMENTDATA同时存在，是为了当第一个元素被添加到list中时，能算出要扩展多大的容量。</p>
+<p>elementData是ArrayList中用于实际存储元素的数组。一个ArrayList实例的容量就是这个数组的长度。任何调用了默认构造器生成的ArrayList实例，都执行了elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA，当第一个元素被添加到list中时，都会被扩展到默认的容量大小，即DEFAULT_CAPACITY（10）。</p>
+<p>末尾添加元素的函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Appends the specified element to the end of this list.</div><div class="line">*</div><div class="line">* <span class="doctag">@param</span> e element to be appended to this list</div><div class="line">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    <span class="comment">// 扩容之后将新增的元素加到末尾，同时将list的size加一。</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该方法首先调用了ensureCapacityInternal函数，用于确保容量足以添加一个元素。ensureCapacityInternal方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123; <span class="comment">// 插入“abc”时，minCapacity为1</span></div><div class="line">    <span class="comment">// 当调用无参构造器时，初始存储元素的数组是DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></div><div class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</div><div class="line">        <span class="comment">// 比较参数和默认容量大小，取大者作为扩展多容量</span></div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); <span class="comment">// minCapacity变为10</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后调用了ensureExplicitCapacity函数，继续扩展容量大操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// 检查目标容量是否大于当前数组的实际长度</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述方法继续调用grow函数，完成扩容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Increases the capacity to ensure that it can hold at least the</div><div class="line"> * number of elements specified by the minimum capacity argument.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> minCapacity the desired minimum capacity</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="comment">// 容量扩充增量为当前数组容量大50%</span></div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="comment">// 若扩充后仍达不到目标容量，则直接使用目标容量作为新容量</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="comment">// 若超过最大容量，则调用hugeCapacity函数</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// 调用工具函数扩容，末尾用null补全</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从注释可知，该方法增长容量以确保list至少能保存传入参数大小数量多元素。之后，就可以插入元素“abc”。插入之后，list的size为1，容量为10.</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2017/03/01/ArrayList/" data-id="cj3b1vxug0001i8isexm53hzr" class="article-share-link">Partager</a>
       
       
     </footer>
@@ -400,7 +400,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2017/03/01/hello-world/" data-id="cj3b1h2ra0004ynistzc5oe20" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2017/03/01/hello-world/" data-id="cj3b1vxul0005i8istbvwr5ta" class="article-share-link">Partager</a>
       
       
     </footer>
@@ -435,7 +435,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">Articles récents</h3>
     <div class="widget">
       <ul>
         
@@ -444,19 +444,19 @@
           </li>
         
           <li>
-            <a href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的研究</a>
-          </li>
-        
-          <li>
             <a href="/2017/03/01/kotlin-new-feature-1/">Kotlin的新特性（一）：基本类型</a>
           </li>
         
           <li>
-            <a href="/2017/03/01/ArrayList/">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
+            <a href="/2017/03/01/Java-synchronized/">Java中synchronized关键字的研究</a>
           </li>
         
           <li>
             <a href="/2017/03/01/PushbackInputStream/">Java IO 中的PushbackInputStream类</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/01/ArrayList/">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
           </li>
         
       </ul>
@@ -472,7 +472,7 @@
   <div class="outer">
     <div id="footer-info" class="inner">
       &copy; 2017 wts<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      Propulsé by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
