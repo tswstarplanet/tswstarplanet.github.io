@@ -25,7 +25,7 @@ Zookeeper的安装dubbo是一个服务治理服务，那它必然有一个服务
 <meta property="og:image" content="http://yoursite.com/images/dubbo-demo.png">
 <meta property="og:image" content="http://yoursite.com/images/dubbo-consumer-client-output.png">
 <meta property="og:image" content="http://yoursite.com/images/dubbo-admin-output.png">
-<meta property="og:updated_time" content="2017-11-26T12:53:38.000Z">
+<meta property="og:updated_time" content="2017-11-26T13:05:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dubbo服务治理环境的搭建">
 <meta name="twitter:description" content="Dubbo是阿里推出的服务治理框架，被国内很多公司广泛使用。关于它的介绍可参考http://http://dubbo.io.本文主要介绍如何通过dubbo搭建服务治理环境，通过在本地搭建环境，有助于学习dubbo的源代码实现，毕竟可以边看源代码边运行调试。
@@ -114,7 +114,7 @@ Zookeeper的安装dubbo是一个服务治理服务，那它必然有一个服务
 <h2 id="安装tomcat"><a href="#安装tomcat" class="headerlink" title="安装tomcat"></a>安装tomcat</h2><p>下载tomcat 7。为什么是7，因为经试验tomcat 8和9两个版本在部署dubbo时都有问题。下载之后进入子目录conf中，将server.xml中配置的connector的port由8080改成其他数字，注意不要和已经被其他程序使用的端口冲突。</p>
 <p>进入tomcat的子目录bin中，运行startup.sh（若是Windows则是startup.bat）。若启动过程不报错，且最后显示tomcat started，则证明启动成功。</p>
 <p>运行shutdown.sh停止tomcat。</p>
-<h2 id="安装dubbo-admin"><a href="#安装dubbo-admin" class="headerlink" title="安装dubbo-admin"></a>安装dubbo-admin</h2><p>从<a href="http://dubbo.io/或github上下载dubbo项目的源代码。dubbo-admin是dubbo的控制台，可以通过它查看和管理在dubbo上注册的服务。下载dubbo源代码之后，从终端进入dubbo文件夹。输入命令" target="_blank" rel="external">http://dubbo.io/或github上下载dubbo项目的源代码。dubbo-admin是dubbo的控制台，可以通过它查看和管理在dubbo上注册的服务。下载dubbo源代码之后，从终端进入dubbo文件夹。输入命令</a></p>
+<h2 id="安装dubbo-admin"><a href="#安装dubbo-admin" class="headerlink" title="安装dubbo-admin"></a>安装dubbo-admin</h2><p>从<a href="http://dubbo.io/" target="_blank" rel="external">http://dubbo.io/</a><br>或github上下载dubbo项目的源代码。dubbo-admin是dubbo的控制台，可以通过它查看和管理在dubbo上注册的服务。下载dubbo源代码之后，从终端进入dubbo文件夹。输入命令</p>
 <p>mvn install -Dmaven.test.skip=true</p>
 <p>将会编译整个dubbo项目，也包括dubbo-admin。</p>
 <p><img src="/images/dubbo_install.png" alt="">   </p>
