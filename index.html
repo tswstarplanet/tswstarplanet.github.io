@@ -77,6 +77,73 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
+      <a href="/2017/11/26/Jdbc中对数据库隔离级别的验证/" title="Jdbc对数据库事务隔离级别的验证" itemprop="url">Jdbc对数据库事务隔离级别的验证</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
+		
+  <p class="article-time">
+    <time datetime="2017-11-25T16:00:00.000Z" itemprop="datePublished"> Published 2017-11-26</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <h2 id="数据库的事务隔离级别"><a href="#数据库的事务隔离级别" class="headerlink" title="数据库的事务隔离级别"></a>数据库的事务隔离级别</h2><p>一.读未提交<br>读未提交是指当一个事务在执行过程中，若另一个事务修改了同一条数据，但没有提交，仍然会被当前数据读取到被更改但未提交的新值。此时可能发生脏读。<br>二.读提交<br>读提交是指当一个事务在执行过程中，若另一个事务修改了数据并且提交了修改。此时提交后的数据会被当前数据读取到。此时会发生不可重复读。<br>三.可重复读<br>可重复读是指当一个事务在执行过程中，不管读同一条数据多少次，读到的数据和第一次读取的值保持一致。此时可能发生幻读，即另一个事务插入了新数据，但没有被当前事务读取到。<br>四.可序列化<br>可序列化是指所有事务顺序执行，此时可避免幻读。</p>
+<p>通过JDBC对数据库的访问，可验证数据库的事务隔离级别。</p>
+<h2 id="建表语句"><a href="#建表语句" class="headerlink" title="建表语句"></a>建表语句</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Orders</div><div class="line">(</div><div class="line">  O_id       <span class="built_in">INT</span> AUTO_INCREMENT,</div><div class="line">  OrderPrice <span class="keyword">DOUBLE</span>(<span class="number">11</span>, <span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">  Customer   <span class="built_in">VARCHAR</span>(<span class="number">50</span>)   <span class="literal">NULL</span>,</div><div class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`PRIMARY`</span></div><div class="line">  PRIMARY <span class="keyword">KEY</span> (O_id)</div><div class="line">);</div></pre></td></tr></table></figure>
+<p>插入一条数据<br>1    1000    Bush    4</p>
+<h2 id="程序代码"><a href="#程序代码" class="headerlink" title="程序代码"></a>程序代码</h2><p>编写两个Java程序，开启两个事务对MySQL数据库进行访问</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"select * from Orders where O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line">            ResultSet rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs.close();</div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTestTwo</span> </span>&#123;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2?useSSL=false"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"UPDATE Orders SET col = 2 WHERE O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line"><span class="comment">//            ResultSet rs = ps.executeQuery();</span></div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line">            <span class="keyword">int</span> count = ps.executeUpdate();</div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line"><span class="comment">//            rs.close();</span></div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在JdbcTest中对数据库表的同一条数据进行了两次查询，只需要在两次查询之间加一个断点，当程序暂停时，运行JdbcTest2，就可以观察到数据库中的数据变化是否符合隔离级别的定义。</p>
+<h2 id="读未提交"><a href="#读未提交" class="headerlink" title="读未提交"></a>读未提交</h2><p>将MySQL数据库全局隔离级别设置为读未提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest2，执行为update语句之后，暂停，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列已经变为2；</p>
+<h2 id="读提交"><a href="#读提交" class="headerlink" title="读提交"></a>读提交</h2><p>将MySQL数据库全局隔离级别设置为读提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest,第一次查询出数据列为2，暂停程序，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列仍然为4；</p>
+<p>若第二步不暂停直接提交，则第三步查询出的数据将为2；</p>
+<h2 id="可重复读"><a href="#可重复读" class="headerlink" title="可重复读"></a>可重复读</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2，直接提交，将数据修改为2；<br>3.运行JdbcTest，读出数据依然为2。</p>
+<h2 id="可序列化"><a href="#可序列化" class="headerlink" title="可序列化"></a>可序列化</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2,将一直被阻塞，直到JdbcTest恢复执行完后，它才能完成事务，或者超时抛出异常。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>数据库的隔离级别是很重要的特性，在不同场合使用不同的隔离级别会有不同的用处。大多数情况下使用的是可重复读。通过编程来验证隔离级别，可以更好地加深对知识的理解。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
       <a href="/2017/05/30/Spring Boot快速搭建Web应用/" title="Spring Boot快速搭建Web应用" itemprop="url">Spring Boot快速搭建Web应用</a>
   </h1>
   <p class="article-author">By
@@ -372,73 +439,6 @@
         <header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2017/03/01/ArrayList/" title="Java集合中的ArrayList类（一）：构造实例和添加元素" itemprop="url">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
-		
-  <p class="article-time">
-    <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished"> Published 2017-03-01</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <p>ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。</p>
-<h2 id="无参构造器"><a href="#无参构造器" class="headerlink" title="无参构造器"></a>无参构造器</h2><p>示例代码：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        strings.add(<span class="string">"abc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>下面看调用构造器以及添加元素的代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 用初始的10的容量大小构造一个空的list</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从上述构造器可以看出，无参构造器只是很简单将常量DEFAULTCAPACITY_EMPTY_ELEMENTDATA赋给成员变量elementData。这个成员变量和常量如下所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Shared empty array instance used for default sized empty instances. We</div><div class="line"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</div><div class="line"> * first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * The array buffer into which the elements of the ArrayList are stored.</div><div class="line"> * The capacity of the ArrayList is the length of this array buffer. Any</div><div class="line"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</div><div class="line"> * will be expanded to DEFAULT_CAPACITY when the first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></div></pre></td></tr></table></figure>
-<p>从注释可以看出，DEFAULTCAPACITY_EMPTY_ELEMENTDATA是一个空的数组实例，用来作为默认大小的空List。它与EMPTY_ELEMENTDATA同时存在，是为了当第一个元素被添加到list中时，能算出要扩展多大的容量。</p>
-<p>elementData是ArrayList中用于实际存储元素的数组。一个ArrayList实例的容量就是这个数组的长度。任何调用了默认构造器生成的ArrayList实例，都执行了elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA，当第一个元素被添加到list中时，都会被扩展到默认的容量大小，即DEFAULT_CAPACITY（10）。</p>
-<p>末尾添加元素的函数：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Appends the specified element to the end of this list.</div><div class="line">*</div><div class="line">* <span class="doctag">@param</span> e element to be appended to this list</div><div class="line">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    <span class="comment">// 扩容之后将新增的元素加到末尾，同时将list的size加一。</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>该方法首先调用了ensureCapacityInternal函数，用于确保容量足以添加一个元素。ensureCapacityInternal方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123; <span class="comment">// 插入“abc”时，minCapacity为1</span></div><div class="line">    <span class="comment">// 当调用无参构造器时，初始存储元素的数组是DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></div><div class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</div><div class="line">        <span class="comment">// 比较参数和默认容量大小，取大者作为扩展多容量</span></div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); <span class="comment">// minCapacity变为10</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>之后调用了ensureExplicitCapacity函数，继续扩展容量大操作：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// 检查目标容量是否大于当前数组的实际长度</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上述方法继续调用grow函数，完成扩容：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Increases the capacity to ensure that it can hold at least the</div><div class="line"> * number of elements specified by the minimum capacity argument.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> minCapacity the desired minimum capacity</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="comment">// 容量扩充增量为当前数组容量大50%</span></div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="comment">// 若扩充后仍达不到目标容量，则直接使用目标容量作为新容量</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="comment">// 若超过最大容量，则调用hugeCapacity函数</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// 调用工具函数扩容，末尾用null补全</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从注释可知，该方法增长容量以确保list至少能保存传入参数大小数量多元素。之后，就可以插入元素“abc”。插入之后，list的size为1，容量为10.</p>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
       <a href="/2017/03/01/PushbackInputStream/" title="Java IO 中的PushbackInputStream类" itemprop="url">Java IO 中的PushbackInputStream类</a>
   </h1>
   <p class="article-author">By
@@ -530,6 +530,73 @@
 <p>这里要注意的是，Employee对象的name和hireDay等状态是有可能为null的，为了确保在这种情况下程序也是正确的，可以使用Objects.equals方法。调用Objects.equals(a, b)，若两个参数都是null返回true，<br>若其中一个为null返回false，以上都不成立则调用a.equals(b)。因此，上面方法的最后一条语句可修改为</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> Objects.equals(name, other.name)</div><div class="line">    &amp;&amp; salary == other.salary;</div><div class="line">    &amp;&amp; Objects.equals(hireDay, other.hireDay);</div></pre></td></tr></table></figure>
 <p>当在扩展类中定义了equals方法时，须首先调用超类的equals方法，如果返回false，则两个对象不可能相等。若返回true，即是超类定义的状态相等。则继续比较子类定义的状态。</p>
+
+        
+        
+        <p class="article-more-link">
+          
+       </p>
+    </div>
+    <footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+
+<div class="comments-count">
+	
+</div>
+
+</footer>
+
+
+    </article>
+
+
+
+
+
+
+   
+    
+    <article class="post-expand post" itemprop="articleBody"> 
+        <header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/03/01/ArrayList/" title="Java集合中的ArrayList类（一）：构造实例和添加元素" itemprop="url">Java集合中的ArrayList类（一）：构造实例和添加元素</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
+		
+  <p class="article-time">
+    <time datetime="2017-02-28T16:59:03.000Z" itemprop="datePublished"> Published 2017-03-01</time>
+    
+  </p>
+</header>
+    <div class="article-content">
+        
+        <p>ArrayList有三个构造器，分别是无参构造器，传入一个整形参数的构造器，以及传入一个Collection实例的构造器。本文主要介绍前两种构造器。</p>
+<h2 id="无参构造器"><a href="#无参构造器" class="headerlink" title="无参构造器"></a>无参构造器</h2><p>示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayListTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        List&lt;String&gt; strings = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line">        strings.add(<span class="string">"abc"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>下面看调用构造器以及添加元素的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * 用初始的10的容量大小构造一个空的list</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">ArrayList</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">this</span>.elementData = DEFAULTCAPACITY_EMPTY_ELEMENTDATA;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从上述构造器可以看出，无参构造器只是很简单将常量DEFAULTCAPACITY_EMPTY_ELEMENTDATA赋给成员变量elementData。这个成员变量和常量如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * Shared empty array instance used for default sized empty instances. We</div><div class="line"> * distinguish this from EMPTY_ELEMENTDATA to know how much to inflate when</div><div class="line"> * first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object[] DEFAULTCAPACITY_EMPTY_ELEMENTDATA = &#123;&#125;;</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * The array buffer into which the elements of the ArrayList are stored.</div><div class="line"> * The capacity of the ArrayList is the length of this array buffer. Any</div><div class="line"> * empty ArrayList with elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA</div><div class="line"> * will be expanded to DEFAULT_CAPACITY when the first element is added.</div><div class="line"> */</div><div class="line"><span class="keyword">transient</span> Object[] elementData; <span class="comment">// non-private to simplify nested class access</span></div></pre></td></tr></table></figure>
+<p>从注释可以看出，DEFAULTCAPACITY_EMPTY_ELEMENTDATA是一个空的数组实例，用来作为默认大小的空List。它与EMPTY_ELEMENTDATA同时存在，是为了当第一个元素被添加到list中时，能算出要扩展多大的容量。</p>
+<p>elementData是ArrayList中用于实际存储元素的数组。一个ArrayList实例的容量就是这个数组的长度。任何调用了默认构造器生成的ArrayList实例，都执行了elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA，当第一个元素被添加到list中时，都会被扩展到默认的容量大小，即DEFAULT_CAPACITY（10）。</p>
+<p>末尾添加元素的函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line">* Appends the specified element to the end of this list.</div><div class="line">*</div><div class="line">* <span class="doctag">@param</span> e element to be appended to this list</div><div class="line">* <span class="doctag">@return</span> &lt;tt&gt;true&lt;/tt&gt; (as specified by &#123;<span class="doctag">@link</span> Collection#add&#125;)</div><div class="line">*/</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</div><div class="line">    ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></div><div class="line">    <span class="comment">// 扩容之后将新增的元素加到末尾，同时将list的size加一。</span></div><div class="line">    elementData[size++] = e;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>该方法首先调用了ensureCapacityInternal函数，用于确保容量足以添加一个元素。ensureCapacityInternal方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureCapacityInternal</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123; <span class="comment">// 插入“abc”时，minCapacity为1</span></div><div class="line">    <span class="comment">// 当调用无参构造器时，初始存储元素的数组是DEFAULTCAPACITY_EMPTY_ELEMENTDATA</span></div><div class="line">    <span class="keyword">if</span> (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) &#123;</div><div class="line">        <span class="comment">// 比较参数和默认容量大小，取大者作为扩展多容量</span></div><div class="line">        minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity); <span class="comment">// minCapacity变为10</span></div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ensureExplicitCapacity(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>之后调用了ensureExplicitCapacity函数，继续扩展容量大操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ensureExplicitCapacity</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    modCount++;</div><div class="line"></div><div class="line">    <span class="comment">// 检查目标容量是否大于当前数组的实际长度</span></div><div class="line">    <span class="keyword">if</span> (minCapacity - elementData.length &gt; <span class="number">0</span>)</div><div class="line">        grow(minCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上述方法继续调用grow函数，完成扩容：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Increases the capacity to ensure that it can hold at least the</div><div class="line"> * number of elements specified by the minimum capacity argument.</div><div class="line"> *</div><div class="line"> * <span class="doctag">@param</span> minCapacity the desired minimum capacity</div><div class="line"> */</div><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">grow</span><span class="params">(<span class="keyword">int</span> minCapacity)</span> </span>&#123;</div><div class="line">    <span class="comment">// overflow-conscious code</span></div><div class="line">    <span class="keyword">int</span> oldCapacity = elementData.length;</div><div class="line">    <span class="comment">// 容量扩充增量为当前数组容量大50%</span></div><div class="line">    <span class="keyword">int</span> newCapacity = oldCapacity + (oldCapacity &gt;&gt; <span class="number">1</span>);</div><div class="line">    <span class="comment">// 若扩充后仍达不到目标容量，则直接使用目标容量作为新容量</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - minCapacity &lt; <span class="number">0</span>)</div><div class="line">        newCapacity = minCapacity;</div><div class="line">    <span class="comment">// 若超过最大容量，则调用hugeCapacity函数</span></div><div class="line">    <span class="keyword">if</span> (newCapacity - MAX_ARRAY_SIZE &gt; <span class="number">0</span>)</div><div class="line">        newCapacity = hugeCapacity(minCapacity);</div><div class="line">    <span class="comment">// 调用工具函数扩容，末尾用null补全</span></div><div class="line">    elementData = Arrays.copyOf(elementData, newCapacity);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从注释可知，该方法增长容量以确保list至少能保存传入参数大小数量多元素。之后，就可以插入元素“abc”。插入之后，list的size为1，容量为10.</p>
 
         
         

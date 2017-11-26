@@ -1,0 +1,416 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Jdbc对数据库事务隔离级别的验证 | WTS&#39;s BLOG</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wts">
+    
+
+    
+    <meta name="description" content="数据库的事务隔离级别一.读未提交读未提交是指当一个事务在执行过程中，若另一个事务修改了同一条数据，但没有提交，仍然会被当前数据读取到被更改但未提交的新值。此时可能发生脏读。二.读提交读提交是指当一个事务在执行过程中，若另一个事务修改了数据并且提交了修改。此时提交后的数据会被当前数据读取到。此时会发生不可重复读。三.可重复读可重复读是指当一个事务在执行过程中，不管读同一条数据多少次，读到的数据和第一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jdbc对数据库事务隔离级别的验证">
+<meta property="og:url" content="http://yoursite.com/2017/11/26/Jdbc中对数据库隔离级别的验证/index.html">
+<meta property="og:site_name" content="WTS's BLOG">
+<meta property="og:description" content="数据库的事务隔离级别一.读未提交读未提交是指当一个事务在执行过程中，若另一个事务修改了同一条数据，但没有提交，仍然会被当前数据读取到被更改但未提交的新值。此时可能发生脏读。二.读提交读提交是指当一个事务在执行过程中，若另一个事务修改了数据并且提交了修改。此时提交后的数据会被当前数据读取到。此时会发生不可重复读。三.可重复读可重复读是指当一个事务在执行过程中，不管读同一条数据多少次，读到的数据和第一">
+<meta property="og:updated_time" content="2017-11-26T03:54:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jdbc对数据库事务隔离级别的验证">
+<meta name="twitter:description" content="数据库的事务隔离级别一.读未提交读未提交是指当一个事务在执行过程中，若另一个事务修改了同一条数据，但没有提交，仍然会被当前数据读取到被更改但未提交的新值。此时可能发生脏读。二.读提交读提交是指当一个事务在执行过程中，若另一个事务修改了数据并且提交了修改。此时提交后的数据会被当前数据读取到。此时会发生不可重复读。三.可重复读可重复读是指当一个事务在执行过程中，不管读同一条数据多少次，读到的数据和第一">
+
+    
+    <link rel="alternative" href="/atom.xml" title="WTS&#39;s BLOG" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="WTS&#39;s BLOG">WTS&#39;s BLOG</a></h1>
+				<h2 class="blog-motto">所有文章都是在学习了相关内容之后写成</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2017/11/26/Jdbc中对数据库隔离级别的验证/" title="Jdbc对数据库事务隔离级别的验证" itemprop="url">Jdbc对数据库事务隔离级别的验证</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
+		
+  <p class="article-time">
+    <time datetime="2017-11-25T16:00:00.000Z" itemprop="datePublished"> Published 2017-11-26</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库的事务隔离级别"><span class="toc-number">1.</span> <span class="toc-text">数据库的事务隔离级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#建表语句"><span class="toc-number">2.</span> <span class="toc-text">建表语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#程序代码"><span class="toc-number">3.</span> <span class="toc-text">程序代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#读未提交"><span class="toc-number">4.</span> <span class="toc-text">读未提交</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#读提交"><span class="toc-number">5.</span> <span class="toc-text">读提交</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重复读"><span class="toc-number">6.</span> <span class="toc-text">可重复读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可序列化"><span class="toc-number">7.</span> <span class="toc-text">可序列化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+		
+		</div>
+		
+		<h2 id="数据库的事务隔离级别"><a href="#数据库的事务隔离级别" class="headerlink" title="数据库的事务隔离级别"></a>数据库的事务隔离级别</h2><p>一.读未提交<br>读未提交是指当一个事务在执行过程中，若另一个事务修改了同一条数据，但没有提交，仍然会被当前数据读取到被更改但未提交的新值。此时可能发生脏读。<br>二.读提交<br>读提交是指当一个事务在执行过程中，若另一个事务修改了数据并且提交了修改。此时提交后的数据会被当前数据读取到。此时会发生不可重复读。<br>三.可重复读<br>可重复读是指当一个事务在执行过程中，不管读同一条数据多少次，读到的数据和第一次读取的值保持一致。此时可能发生幻读，即另一个事务插入了新数据，但没有被当前事务读取到。<br>四.可序列化<br>可序列化是指所有事务顺序执行，此时可避免幻读。</p>
+<p>通过JDBC对数据库的访问，可验证数据库的事务隔离级别。</p>
+<h2 id="建表语句"><a href="#建表语句" class="headerlink" title="建表语句"></a>建表语句</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Orders</div><div class="line">(</div><div class="line">  O_id       <span class="built_in">INT</span> AUTO_INCREMENT,</div><div class="line">  OrderPrice <span class="keyword">DOUBLE</span>(<span class="number">11</span>, <span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">  Customer   <span class="built_in">VARCHAR</span>(<span class="number">50</span>)   <span class="literal">NULL</span>,</div><div class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`PRIMARY`</span></div><div class="line">  PRIMARY <span class="keyword">KEY</span> (O_id)</div><div class="line">);</div></pre></td></tr></table></figure>
+<p>插入一条数据<br>1    1000    Bush    4</p>
+<h2 id="程序代码"><a href="#程序代码" class="headerlink" title="程序代码"></a>程序代码</h2><p>编写两个Java程序，开启两个事务对MySQL数据库进行访问</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"select * from Orders where O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line">            ResultSet rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs.close();</div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTestTwo</span> </span>&#123;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2?useSSL=false"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"UPDATE Orders SET col = 2 WHERE O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line"><span class="comment">//            ResultSet rs = ps.executeQuery();</span></div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line">            <span class="keyword">int</span> count = ps.executeUpdate();</div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line"><span class="comment">//            rs.close();</span></div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在JdbcTest中对数据库表的同一条数据进行了两次查询，只需要在两次查询之间加一个断点，当程序暂停时，运行JdbcTest2，就可以观察到数据库中的数据变化是否符合隔离级别的定义。</p>
+<h2 id="读未提交"><a href="#读未提交" class="headerlink" title="读未提交"></a>读未提交</h2><p>将MySQL数据库全局隔离级别设置为读未提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest2，执行为update语句之后，暂停，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列已经变为2；</p>
+<h2 id="读提交"><a href="#读提交" class="headerlink" title="读提交"></a>读提交</h2><p>将MySQL数据库全局隔离级别设置为读提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest,第一次查询出数据列为2，暂停程序，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列仍然为4；</p>
+<p>若第二步不暂停直接提交，则第三步查询出的数据将为2；</p>
+<h2 id="可重复读"><a href="#可重复读" class="headerlink" title="可重复读"></a>可重复读</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2，直接提交，将数据修改为2；<br>3.运行JdbcTest，读出数据依然为2。</p>
+<h2 id="可序列化"><a href="#可序列化" class="headerlink" title="可序列化"></a>可序列化</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2,将一直被阻塞，直到JdbcTest恢复执行完后，它才能完成事务，或者超时抛出异常。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>数据库的隔离级别是很重要的特性，在不同场合使用不同的隔离级别会有不同的用处。大多数情况下使用的是可重复读。通过编程来验证隔离级别，可以更好地加深对知识的理解。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2017/11/26/Jdbc中对数据库隔离级别的验证/" data-title="Jdbc对数据库事务隔离级别的验证 | WTS&#39;s BLOG" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2017/05/30/Spring Boot快速搭建Web应用/"  title="Spring Boot快速搭建Web应用">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring Boot快速搭建Web应用
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库的事务隔离级别"><span class="toc-number">1.</span> <span class="toc-text">数据库的事务隔离级别</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#建表语句"><span class="toc-number">2.</span> <span class="toc-text">建表语句</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#程序代码"><span class="toc-number">3.</span> <span class="toc-text">程序代码</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#读未提交"><span class="toc-number">4.</span> <span class="toc-text">读未提交</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#读提交"><span class="toc-number">5.</span> <span class="toc-text">读提交</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可重复读"><span class="toc-number">6.</span> <span class="toc-text">可重复读</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#可序列化"><span class="toc-number">7.</span> <span class="toc-text">可序列化</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">8.</span> <span class="toc-text">总结</span></a></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://github.com/tswstarplanet" target="_blank" title="我的github">我的github</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2017 
+		
+		<a href="/about" target="_blank" title="wts">wts</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
