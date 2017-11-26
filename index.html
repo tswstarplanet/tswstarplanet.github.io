@@ -101,16 +101,16 @@
 <h2 id="安装dubbo-admin"><a href="#安装dubbo-admin" class="headerlink" title="安装dubbo-admin"></a>安装dubbo-admin</h2><p>从<a href="http://dubbo.io/或github上下载dubbo项目的源代码。dubbo-admin是dubbo的控制台，可以通过它查看和管理在dubbo上注册的服务。下载dubbo源代码之后，从终端进入dubbo文件夹。输入命令" target="_blank" rel="external">http://dubbo.io/或github上下载dubbo项目的源代码。dubbo-admin是dubbo的控制台，可以通过它查看和管理在dubbo上注册的服务。下载dubbo源代码之后，从终端进入dubbo文件夹。输入命令</a></p>
 <p>mvn install -Dmaven.test.skip=true</p>
 <p>将会编译整个dubbo项目，也包括dubbo-admin。</p>
-<p><img src="/images/dubbo/dubbo_install.png" alt="">   </p>
+<p><img src="/images/dubbo_install.png" alt="">   </p>
 <p>之后进入dubbo-admin的子目录target中，会发现多了一个dubbo-admin-2.5.7.war。将这个包拷到tomcat的webapps文件夹中。</p>
 <p>按前面介绍的方法先启动zookeeper，再启动tomcat。之后在浏览器中输入localhost:8888/dubbo-admin-2.5.7。会看到如下界面。</p>
-<p><img src="/images/dubbo/dubbo-admin-interface.png" alt="">  </p>
+<p><img src="/images/dubbo-admin-interface.png" alt="">  </p>
 <p>可以看到服务提供者和调用者都是0，说明还没有服务注册到zookeeper中。</p>
 <h2 id="注册服务生产者和消费者"><a href="#注册服务生产者和消费者" class="headerlink" title="注册服务生产者和消费者"></a>注册服务生产者和消费者</h2><p>为简化起见，本文采用IDE来构建服务。</p>
 <p>首先是用intellij idea导入整个dubbo项目。</p>
-<p><img src="/images/dubbo/dubbo-project.png" alt="">  </p>
+<p><img src="/images/dubbo-project.png" alt="">  </p>
 <p>可以看到其中就有dubbo-demo项目，它主要有三个子项目构成。</p>
-<p><img src="/images/dubbo/dubbo-demo.png" alt="">  </p>
+<p><img src="/images/dubbo-demo.png" alt="">  </p>
 <p>其中远程调用的接口DemoService：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">package</span> com.alibaba.dubbo.demo;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DemoService</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="function">String <span class="title">sayHello</span><span class="params">(String name)</span></span>;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>这个类之所以是一个单独的项目，是因为它需要被服务端和客户端同时引用。服务端会实现它：</p>
