@@ -1,0 +1,420 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>Dubbo中对线程池的使用 | 博浪</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
+    
+    <meta name="author" content="wts">
+    
+
+    
+    <meta name="description" content="线程池的概念线程池（英语：thread pool）：一种线程使用模式。线程过多会带来调度开销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。
+Dubbo中的线程池Dubbo是一款高性能的分布式服务框架，它实现了透明化的远程调用，只需要通过配置，就能像调用当前jvm内的方法一样调用另一个JVM中的方法，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo中对线程池的使用">
+<meta property="og:url" content="http://yoursite.com/2018/08/05/Dubbo中对线程池的使用/index.html">
+<meta property="og:site_name" content="博浪">
+<meta property="og:description" content="线程池的概念线程池（英语：thread pool）：一种线程使用模式。线程过多会带来调度开销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。
+Dubbo中的线程池Dubbo是一款高性能的分布式服务框架，它实现了透明化的远程调用，只需要通过配置，就能像调用当前jvm内的方法一样调用另一个JVM中的方法，">
+<meta property="og:updated_time" content="2018-08-05T14:34:47.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dubbo中对线程池的使用">
+<meta name="twitter:description" content="线程池的概念线程池（英语：thread pool）：一种线程使用模式。线程过多会带来调度开销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。
+Dubbo中的线程池Dubbo是一款高性能的分布式服务框架，它实现了透明化的远程调用，只需要通过配置，就能像调用当前jvm内的方法一样调用另一个JVM中的方法，">
+
+    
+    <link rel="alternative" href="/atom.xml" title="博浪" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/jacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/jacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      
+<div>
+		
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="博浪">博浪</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/about">About</a></li>
+					
+					<li>
+ 					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="search" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+  
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2018/08/05/Dubbo中对线程池的使用/" title="Dubbo中对线程池的使用" itemprop="url">Dubbo中对线程池的使用</a>
+  </h1>
+  <p class="article-author">By
+       
+		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
+		
+  <p class="article-time">
+    <time datetime="2018-08-04T16:00:00.000Z" itemprop="datePublished"> Published 2018-08-05</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程池的概念"><span class="toc-number">1.</span> <span class="toc-text">线程池的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dubbo中的线程池"><span class="toc-number">2.</span> <span class="toc-text">Dubbo中的线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo中对Netty线程的使用"><span class="toc-number">2.1.</span> <span class="toc-text">Dubbo中对Netty线程的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo业务线程池的使用"><span class="toc-number">2.2.</span> <span class="toc-text">Dubbo业务线程池的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo中线程池的种类"><span class="toc-number">2.3.</span> <span class="toc-text">Dubbo中线程池的种类</span></a></li></ol></li></ol>
+		
+		</div>
+		
+		<h2 id="线程池的概念"><a href="#线程池的概念" class="headerlink" title="线程池的概念"></a>线程池的概念</h2><p>线程池（英语：thread pool）：一种线程使用模式。线程过多会带来调度开销，进而影响缓存局部性和整体性能。而线程池维护着多个线程，等待着监督管理者分配可并发执行的任务。这避免了在处理短时间任务时创建与销毁线程的代价。</p>
+<h2 id="Dubbo中的线程池"><a href="#Dubbo中的线程池" class="headerlink" title="Dubbo中的线程池"></a>Dubbo中的线程池</h2><p>Dubbo是一款高性能的分布式服务框架，它实现了透明化的远程调用，只需要通过配置，就能像调用当前jvm内的方法一样调用另一个JVM中的方法，而无需关心底层通信细节。</p>
+<p>我们在使用Dubbo时，如果只是发布一个服务供其他java进程调用，或是调用另一个JVM进程中的方法，一般不需要显式地关注多线程的使用。但是我们的一个程序，可以发布多个接口，可以并发处理多个接口的调用。或是并发地调用多个远程接口。这显然是底层框架帮我们处理了多线程的工作。</p>
+<h3 id="Dubbo中对Netty线程的使用"><a href="#Dubbo中对Netty线程的使用" class="headerlink" title="Dubbo中对Netty线程的使用"></a>Dubbo中对Netty线程的使用</h3><p>Dubbo在传输层默认使用的是Netty作为通信框架。Dubbo作为服务提供者时使用Netty建立Tcp服务端，作为服务使用者时也使用Netty建立Tcp客户端。</p>
+<p>Netty是基于java的NIO技术并结合线程池的通信框架。以下是Dubbo建立服务端的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyServer</span> <span class="keyword">extends</span> <span class="title">AbstractServer</span> <span class="keyword">implements</span> <span class="title">Server</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(NettyServer.class);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Map&lt;String, Channel&gt; channels; <span class="comment">// &lt;ip:port, channel&gt;</span></div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServerBootstrap bootstrap;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> io.netty.channel.Channel channel;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> EventLoopGroup bossGroup;</div><div class="line">    <span class="keyword">private</span> EventLoopGroup workerGroup;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NettyServer</span><span class="params">(URL url, ChannelHandler handler)</span> <span class="keyword">throws</span> RemotingException </span>&#123;</div><div class="line">        <span class="keyword">super</span>(url, ChannelHandlers.wrap(handler, ExecutorUtil.setThreadName(url, SERVER_THREAD_POOL_NAME)));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doOpen</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</div><div class="line">        bootstrap = <span class="keyword">new</span> ServerBootstrap();</div><div class="line"></div><div class="line">        bossGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">1</span>, <span class="keyword">new</span> DefaultThreadFactory(<span class="string">"NettyServerBoss"</span>, <span class="keyword">true</span>));</div><div class="line">        workerGroup = <span class="keyword">new</span> NioEventLoopGroup(getUrl().getPositiveParameter(Constants.IO_THREADS_KEY, Constants.DEFAULT_IO_THREADS),</div><div class="line">                <span class="keyword">new</span> DefaultThreadFactory(<span class="string">"NettyServerWorker"</span>, <span class="keyword">true</span>));</div><div class="line"></div><div class="line">        <span class="keyword">final</span> NettyServerHandler nettyServerHandler = <span class="keyword">new</span> NettyServerHandler(getUrl(), <span class="keyword">this</span>);</div><div class="line">        channels = nettyServerHandler.getChannels();</div><div class="line"></div><div class="line">        bootstrap.group(bossGroup, workerGroup)</div><div class="line">                .channel(NioServerSocketChannel.class)</div><div class="line">                .childOption(ChannelOption.TCP_NODELAY, Boolean.TRUE)</div><div class="line">                .childOption(ChannelOption.SO_REUSEADDR, Boolean.TRUE)</div><div class="line">                .childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)</div><div class="line">                .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</div><div class="line">                    <span class="meta">@Override</span></div><div class="line">                    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(NioSocketChannel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                        NettyCodecAdapter adapter = <span class="keyword">new</span> NettyCodecAdapter(getCodec(), getUrl(), NettyServer.<span class="keyword">this</span>);</div><div class="line">                        ch.pipeline()<span class="comment">//.addLast("logging",new LoggingHandler(LogLevel.INFO))//for debug</span></div><div class="line">                                .addLast(<span class="string">"decoder"</span>, adapter.getDecoder())</div><div class="line">                                .addLast(<span class="string">"encoder"</span>, adapter.getEncoder())</div><div class="line">                                .addLast(<span class="string">"handler"</span>, nettyServerHandler);</div><div class="line">                    &#125;</div><div class="line">                &#125;);</div><div class="line">        <span class="comment">// bind</span></div><div class="line">        ChannelFuture channelFuture = bootstrap.bind(getBindAddress());</div><div class="line">        channelFuture.syncUninterruptibly();</div><div class="line">        channel = channelFuture.channel();</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    <span class="comment">// 省略若干代码</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>ServerBootstrap是Netty的一个类，用于建立服务端的功能。它使用了两组线程池，一个是父线程池，用于处理接受客户端的连接请求，因为Dubbo协议只需要监听一个端口，所以这个线程池只需要一个线程即可。另一个是子线程池，每当和一个客户端建立连接之后，就会从此线程池中选择一个线程进行IO操作。</p>
+<p>Dubbo中建立tcp客户端也使用了Netty，下面是实现：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">NettyClient</span> <span class="keyword">extends</span> <span class="title">AbstractClient</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(NettyClient.class);</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> NioEventLoopGroup nioEventLoopGroup = <span class="keyword">new</span> NioEventLoopGroup(Constants.DEFAULT_IO_THREADS, <span class="keyword">new</span> DefaultThreadFactory(<span class="string">"NettyClientWorker"</span>, <span class="keyword">true</span>));</div><div class="line"></div><div class="line">    <span class="keyword">private</span> Bootstrap bootstrap;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">volatile</span> Channel channel; <span class="comment">// volatile, please copy reference to use</span></div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NettyClient</span><span class="params">(<span class="keyword">final</span> URL url, <span class="keyword">final</span> ChannelHandler handler)</span> <span class="keyword">throws</span> RemotingException </span>&#123;</div><div class="line">        <span class="keyword">super</span>(url, wrapChannelHandler(url, handler));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doOpen</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123;</div><div class="line">        <span class="keyword">final</span> NettyClientHandler nettyClientHandler = <span class="keyword">new</span> NettyClientHandler(getUrl(), <span class="keyword">this</span>);</div><div class="line">        bootstrap = <span class="keyword">new</span> Bootstrap();</div><div class="line">        bootstrap.group(nioEventLoopGroup)</div><div class="line">                .option(ChannelOption.SO_KEEPALIVE, <span class="keyword">true</span>)</div><div class="line">                .option(ChannelOption.TCP_NODELAY, <span class="keyword">true</span>)</div><div class="line">                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)</div><div class="line">                <span class="comment">//.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getTimeout())</span></div><div class="line">                .channel(NioSocketChannel.class);</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (getTimeout() &lt; <span class="number">3000</span>) &#123;</div><div class="line">            bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, <span class="number">3000</span>);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, getTimeout());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        bootstrap.handler(<span class="keyword">new</span> ChannelInitializer() &#123;</div><div class="line"></div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(Channel ch)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">                NettyCodecAdapter adapter = <span class="keyword">new</span> NettyCodecAdapter(getCodec(), getUrl(), NettyClient.<span class="keyword">this</span>);</div><div class="line">                ch.pipeline()<span class="comment">//.addLast("logging",new LoggingHandler(LogLevel.INFO))//for debug</span></div><div class="line">                        .addLast(<span class="string">"decoder"</span>, adapter.getDecoder())</div><div class="line">                        .addLast(<span class="string">"encoder"</span>, adapter.getEncoder())</div><div class="line">                        .addLast(<span class="string">"handler"</span>, nettyClientHandler);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>Netty客户端只需要一个线程池就可以。</p>
+<p>以上是Dubbo中对于IO线程池的使用。此外，Dubbo发送请求和处理请求也使用了线程池。</p>
+<h3 id="Dubbo业务线程池的使用"><a href="#Dubbo业务线程池的使用" class="headerlink" title="Dubbo业务线程池的使用"></a>Dubbo业务线程池的使用</h3><h3 id="Dubbo中线程池的种类"><a href="#Dubbo中线程池的种类" class="headerlink" title="Dubbo中线程池的种类"></a>Dubbo中线程池的种类</h3><p>Dubbo中使用的线程池都是基于Java提供的ThreadPoolExecutor类。它基于不同的策略提供了创建不同的ThreadPoolExecutor的线程池工厂。包括以下几种：</p>
+<p><b>CachedThreadPool</b> : 缓存线程池，它创建的是一个可以扩展的线程池，可以配置核心线程数量，最大线程数量，任务队列长度，空闲线程保活时间。这个线程池默认的队列长度是java中int类型的最大值。</p>
+<p><b>EagerThreadPool</b> : 这个线程池工厂提供的是一个Dubbo提供自定义的线程池类EagerThreadPoolExecutor，这个线程池扩展了java中的ThreadPoolExecutor。当所有的核心线程都处于忙碌状态时，若有新任务到来，将会直接创建新线程，而不是放到任务队列中。</p>
+<p><b>FixedThreadPool</b> : 固定线程池，它创建的是一个拥有固定线程数量的线程池。用户可配置相关参数。这个线程池是默认选项。</p>
+<p><b>LimitedThreadPool</b> : 可伸缩线程池。它提供的线程池的特色是，线程池设定的线程保活时间是Long类型的最大值。因此它的线程不会减少，只会增加。</p>
+<p>Dubbo中对业务线程池的配置是在下面这个类中实现的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WrappedChannelHandler</span> <span class="keyword">implements</span> <span class="title">ChannelHandlerDelegate</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> Logger logger = LoggerFactory.getLogger(WrappedChannelHandler.class);</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">static</span> <span class="keyword">final</span> ExecutorService SHARED_EXECUTOR = Executors.newCachedThreadPool(<span class="keyword">new</span> NamedThreadFactory(<span class="string">"DubboSharedHandler"</span>, <span class="keyword">true</span>));</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> ExecutorService executor;</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> ChannelHandler handler;</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> <span class="keyword">final</span> URL url;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WrappedChannelHandler</span><span class="params">(ChannelHandler handler, URL url)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.handler = handler;</div><div class="line">        <span class="keyword">this</span>.url = url;</div><div class="line">        executor = (ExecutorService) ExtensionLoader.getExtensionLoader(ThreadPool.class).getAdaptiveExtension().getExecutor(url);</div><div class="line"></div><div class="line">        String componentKey = Constants.EXECUTOR_SERVICE_COMPONENT_KEY;</div><div class="line">        <span class="keyword">if</span> (Constants.CONSUMER_SIDE.equalsIgnoreCase(url.getParameter(Constants.SIDE_KEY))) &#123;</div><div class="line">            componentKey = Constants.CONSUMER_SIDE;</div><div class="line">        &#125;</div><div class="line">        DataStore dataStore = ExtensionLoader.getExtensionLoader(DataStore.class).getDefaultExtension();</div><div class="line">        dataStore.put(componentKey, Integer.toString(url.getPort()), executor);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>这个类持有了一个线程池接口ExecutorService executor。当实例化这个类时，会根据URL的参数获取对应的线程池，也就是上面说的四种线程池中的一种。</p>
+<p>以上是对Dubbo中线程池使用的简要介绍，还有很多地方没有深入。后续有机会再分析。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+<div class="article-catetags">
+
+
+</div>
+
+
+
+	<div class="article-share" id="share">
+	
+	  <div data-url="http://yoursite.com/2018/08/05/Dubbo中对线程池的使用/" data-title="Dubbo中对线程池的使用 | 博浪" data-tsina="null" class="share clearfix">
+	  </div>
+	
+	</div>
+
+
+</footer>
+
+   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2018/05/27/Spring容器ClasspathXmlApplicationContext启动过程解析/"  title="Spring容器ClassPathXmlApplicationContext启动过程解析">
+ <strong>下一篇：</strong><br/> 
+ <span>Spring容器ClassPathXmlApplicationContext启动过程解析
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+ 
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程池的概念"><span class="toc-number">1.</span> <span class="toc-text">线程池的概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dubbo中的线程池"><span class="toc-number">2.</span> <span class="toc-text">Dubbo中的线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo中对Netty线程的使用"><span class="toc-number">2.1.</span> <span class="toc-text">Dubbo中对Netty线程的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo业务线程池的使用"><span class="toc-number">2.2.</span> <span class="toc-text">Dubbo业务线程池的使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Dubbo中线程池的种类"><span class="toc-number">2.3.</span> <span class="toc-text">Dubbo中线程池的种类</span></a></li></ol></li></ol>
+ 
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+
+
+  
+
+  
+
+  <div class="linkslist">
+  <p class="asidetitle">Links</p>
+    <ul>
+        
+          <li>
+            
+            	<a href="https://github.com/tswstarplanet" target="_blank" title="我的github">我的github</a>
+            
+          </li>
+        
+    </ul>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	
+	<div class="social-font" class="clearfix">
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	</div>
+			
+		
+
+		<p class="copyright">
+		Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/wuchong/jacman" target="_blank" title="Jacman">Jacman</a> © 2018 
+		
+		<a href="/about" target="_blank" title="wts">wts</a>
+		
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/jquery.qrcode-0.12.0.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+  
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else{
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  c.click(function(){
+    ta.css('display', 'block').addClass('fadeIn');
+  });
+  o.click(function(){
+    ta.css('display', 'none');
+  });
+  $(window).scroll(function(){
+    ta.css("top",Math.max(140,320-$(this).scrollTop()));
+  });
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina'),
+      description = $this.attr('description');
+  var html = [
+  '<div class="hoverqrcode clearfix"></div>',
+  '<a class="overlay" id="qrcode"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="微信"></a>',
+  '<a href="http://widget.renren.com/dialog/share?resourceUrl=' + encodedUrl + '&srcUrl=' + encodedUrl + '&title=' + title +'" class="article-share-renren" target="_blank" title="人人"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="微博"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+
+  $('.hoverqrcode').hide();
+
+  var myWidth = 0;
+  function updatehoverqrcode(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+    var qrsize = myWidth > 1024 ? 200:100;
+    var options = {render: 'image', size: qrsize, fill: '#2ca6cb', text: url, radius: 0.5, quiet: 1};
+    var p = $('.article-share-qrcode').position();
+    $('.hoverqrcode').empty().css('width', qrsize).css('height', qrsize)
+                          .css('left', p.left-qrsize/2+20).css('top', p.top-qrsize-10)
+                          .qrcode(options);
+  };
+  $(window).resize(function(){
+    $('.hoverqrcode').hide();
+  });
+  $('.article-share-qrcode').click(function(){
+    updatehoverqrcode();
+    $('.hoverqrcode').toggle();
+  });
+  $('.article-share-qrcode').hover(function(){}, function(){
+      $('.hoverqrcode').hide();
+  });
+});   
+</script>
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+<!-- Analytics Begin -->
+
+
+
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "//hm.baidu.com/hm.js?e6d1f421bbc9962127a50488f9ed37d1";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+
+<!-- Analytics End -->
+
+<!-- Totop Begin -->
+
+	<div id="totop">
+	<a title="Back to Top"><img src="/img/scrollup.png"/></a>
+	</div>
+	<script src="/js/totop.js"></script>
+
+<!-- Totop End -->
+
+<!-- MathJax Begin -->
+<!-- mathjax config similar to math.stackexchange -->
+
+
+<!-- MathJax End -->
+
+<!-- Tiny_search Begin -->
+
+<!-- Tiny_search End -->
+
+  </body>
+</html>
