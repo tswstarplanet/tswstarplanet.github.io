@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-08-20T14:56:14.000Z</updated>
+  <updated>2018-08-20T15:01:27.000Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -16,15 +16,13 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
+    <title>Dubbo的同步调用在消费者端的实现机制</title>
     <link href="http://yoursite.com/2018/08/20/dubbo%E5%90%8C%E6%AD%A5%E8%B0%83%E7%94%A8%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6/"/>
     <id>http://yoursite.com/2018/08/20/dubbo同步调用的实现机制/</id>
-    <published>2018-08-20T13:44:31.000Z</published>
-    <updated>2018-08-20T14:56:14.000Z</updated>
+    <published>2018-08-19T16:00:00.000Z</published>
+    <updated>2018-08-20T15:01:27.000Z</updated>
     
-    <content type="html"><![CDATA[<hr>
-<p>title: Dubbo同步调用在消费者端的实现机制<br>date: 2018-8-20<br>—</p>
-<h1 id="Dubbo的同步调用"><a href="#Dubbo的同步调用" class="headerlink" title="Dubbo的同步调用"></a>Dubbo的同步调用</h1><p>使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。</p>
+    <content type="html"><![CDATA[<h1 id="Dubbo的同步调用"><a href="#Dubbo的同步调用" class="headerlink" title="Dubbo的同步调用"></a>Dubbo的同步调用</h1><p>使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。</p>
 <p>Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感觉来说是这样的）到远程服务返回结果，或是超时为止。</p>
 <p>那么Dubbo是如何实现这种同步调用机制的呢？我们知道RPC的本质是用TCP协议向另一个进程（可能在同一台机器上，也可能不在）发送请求，服务端进程接收到请求后，将请求解析为对本地方法的一个调用，调用之后将结果返回给客户端。客户端接收到返回之后，再将结果反序列化为需要的结果，返回给上层的业务。</p>
 <h1 id="Dubbo同步调用在客户端的实现"><a href="#Dubbo同步调用在客户端的实现" class="headerlink" title="Dubbo同步调用在客户端的实现"></a>Dubbo同步调用在客户端的实现</h1><p>Dubbo的整个调用流程是：<br>1.服务提供者导出服务到本机的IP和端口上，即是建立一个TCP服务器；<br>2.服务提供者发布服务到注册中心；<br>3.服务消费者向注册中心订阅服务提供者的信息；<br>4.服务消费者建立远程服务的代理，并建立一个TCP客户端。</p>
@@ -53,9 +51,7 @@
     
     <summary type="html">
     
-      &lt;hr&gt;
-&lt;p&gt;title: Dubbo同步调用在消费者端的实现机制&lt;br&gt;date: 2018-8-20&lt;br&gt;—&lt;/p&gt;
-&lt;h1 id=&quot;Dubbo的同步调用&quot;&gt;&lt;a href=&quot;#Dubbo的同步调用&quot; class=&quot;headerlink&quot; title=&quot;Dubbo的同步
+      &lt;h1 id=&quot;Dubbo的同步调用&quot;&gt;&lt;a href=&quot;#Dubbo的同步调用&quot; class=&quot;headerlink&quot; title=&quot;Dubbo的同步调用&quot;&gt;&lt;/a&gt;Dubbo的同步调用&lt;/h1&gt;&lt;p&gt;使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubb
     
     </summary>
     
@@ -237,42 +233,6 @@
   </entry>
   
   <entry>
-    <title>Jdbc对数据库事务隔离级别的验证</title>
-    <link href="http://yoursite.com/2017/11/26/Jdbc%E4%B8%AD%E5%AF%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E9%AA%8C%E8%AF%81/"/>
-    <id>http://yoursite.com/2017/11/26/Jdbc中对数据库隔离级别的验证/</id>
-    <published>2017-11-25T16:00:00.000Z</published>
-    <updated>2017-11-26T03:54:24.000Z</updated>
-    
-    <content type="html"><![CDATA[<h2 id="数据库的事务隔离级别"><a href="#数据库的事务隔离级别" class="headerlink" title="数据库的事务隔离级别"></a>数据库的事务隔离级别</h2><p>一.读未提交<br>读未提交是指当一个事务在执行过程中，若另一个事务修改了同一条数据，但没有提交，仍然会被当前数据读取到被更改但未提交的新值。此时可能发生脏读。<br>二.读提交<br>读提交是指当一个事务在执行过程中，若另一个事务修改了数据并且提交了修改。此时提交后的数据会被当前数据读取到。此时会发生不可重复读。<br>三.可重复读<br>可重复读是指当一个事务在执行过程中，不管读同一条数据多少次，读到的数据和第一次读取的值保持一致。此时可能发生幻读，即另一个事务插入了新数据，但没有被当前事务读取到。<br>四.可序列化<br>可序列化是指所有事务顺序执行，此时可避免幻读。</p>
-<p>通过JDBC对数据库的访问，可验证数据库的事务隔离级别。</p>
-<h2 id="建表语句"><a href="#建表语句" class="headerlink" title="建表语句"></a>建表语句</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Orders</div><div class="line">(</div><div class="line">  O_id       <span class="built_in">INT</span> AUTO_INCREMENT,</div><div class="line">  OrderPrice <span class="keyword">DOUBLE</span>(<span class="number">11</span>, <span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">  Customer   <span class="built_in">VARCHAR</span>(<span class="number">50</span>)   <span class="literal">NULL</span>,</div><div class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`PRIMARY`</span></div><div class="line">  PRIMARY <span class="keyword">KEY</span> (O_id)</div><div class="line">);</div></pre></td></tr></table></figure>
-<p>插入一条数据<br>1    1000    Bush    4</p>
-<h2 id="程序代码"><a href="#程序代码" class="headerlink" title="程序代码"></a>程序代码</h2><p>编写两个Java程序，开启两个事务对MySQL数据库进行访问</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"select * from Orders where O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line">            ResultSet rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs.close();</div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTestTwo</span> </span>&#123;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2?useSSL=false"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"UPDATE Orders SET col = 2 WHERE O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line"><span class="comment">//            ResultSet rs = ps.executeQuery();</span></div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line">            <span class="keyword">int</span> count = ps.executeUpdate();</div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line"><span class="comment">//            rs.close();</span></div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>在JdbcTest中对数据库表的同一条数据进行了两次查询，只需要在两次查询之间加一个断点，当程序暂停时，运行JdbcTest2，就可以观察到数据库中的数据变化是否符合隔离级别的定义。</p>
-<h2 id="读未提交"><a href="#读未提交" class="headerlink" title="读未提交"></a>读未提交</h2><p>将MySQL数据库全局隔离级别设置为读未提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;</p>
-<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest2，执行为update语句之后，暂停，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列已经变为2；</p>
-<h2 id="读提交"><a href="#读提交" class="headerlink" title="读提交"></a>读提交</h2><p>将MySQL数据库全局隔离级别设置为读提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;</p>
-<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest,第一次查询出数据列为2，暂停程序，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列仍然为4；</p>
-<p>若第二步不暂停直接提交，则第三步查询出的数据将为2；</p>
-<h2 id="可重复读"><a href="#可重复读" class="headerlink" title="可重复读"></a>可重复读</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;</p>
-<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2，直接提交，将数据修改为2；<br>3.运行JdbcTest，读出数据依然为2。</p>
-<h2 id="可序列化"><a href="#可序列化" class="headerlink" title="可序列化"></a>可序列化</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;</p>
-<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2,将一直被阻塞，直到JdbcTest恢复执行完后，它才能完成事务，或者超时抛出异常。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>数据库的隔离级别是很重要的特性，在不同场合使用不同的隔离级别会有不同的用处。大多数情况下使用的是可重复读。通过编程来验证隔离级别，可以更好地加深对知识的理解。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;数据库的事务隔离级别&quot;&gt;&lt;a href=&quot;#数据库的事务隔离级别&quot; class=&quot;headerlink&quot; title=&quot;数据库的事务隔离级别&quot;&gt;&lt;/a&gt;数据库的事务隔离级别&lt;/h2&gt;&lt;p&gt;一.读未提交&lt;br&gt;读未提交是指当一个事务在执行过程中，若另一个事务修改了同
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
     <title>Dubbo服务治理环境的搭建</title>
     <link href="http://yoursite.com/2017/11/26/Dubbo%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA/"/>
     <id>http://yoursite.com/2017/11/26/Dubbo服务治理环境的搭建/</id>
@@ -327,6 +287,42 @@
     <summary type="html">
     
       &lt;p&gt;Dubbo是阿里推出的服务治理框架，被国内很多公司广泛使用。关于它的介绍可参考&lt;a href=&quot;http://http://dubbo.io&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://http://dubbo.io&lt;/a&gt;.&lt;br&gt;本文主
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Jdbc对数据库事务隔离级别的验证</title>
+    <link href="http://yoursite.com/2017/11/26/Jdbc%E4%B8%AD%E5%AF%B9%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%E7%9A%84%E9%AA%8C%E8%AF%81/"/>
+    <id>http://yoursite.com/2017/11/26/Jdbc中对数据库隔离级别的验证/</id>
+    <published>2017-11-25T16:00:00.000Z</published>
+    <updated>2017-11-26T03:54:24.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="数据库的事务隔离级别"><a href="#数据库的事务隔离级别" class="headerlink" title="数据库的事务隔离级别"></a>数据库的事务隔离级别</h2><p>一.读未提交<br>读未提交是指当一个事务在执行过程中，若另一个事务修改了同一条数据，但没有提交，仍然会被当前数据读取到被更改但未提交的新值。此时可能发生脏读。<br>二.读提交<br>读提交是指当一个事务在执行过程中，若另一个事务修改了数据并且提交了修改。此时提交后的数据会被当前数据读取到。此时会发生不可重复读。<br>三.可重复读<br>可重复读是指当一个事务在执行过程中，不管读同一条数据多少次，读到的数据和第一次读取的值保持一致。此时可能发生幻读，即另一个事务插入了新数据，但没有被当前事务读取到。<br>四.可序列化<br>可序列化是指所有事务顺序执行，此时可避免幻读。</p>
+<p>通过JDBC对数据库的访问，可验证数据库的事务隔离级别。</p>
+<h2 id="建表语句"><a href="#建表语句" class="headerlink" title="建表语句"></a>建表语句</h2><figure class="highlight sql"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> Orders</div><div class="line">(</div><div class="line">  O_id       <span class="built_in">INT</span> AUTO_INCREMENT,</div><div class="line">  OrderPrice <span class="keyword">DOUBLE</span>(<span class="number">11</span>, <span class="number">2</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</div><div class="line">  Customer   <span class="built_in">VARCHAR</span>(<span class="number">50</span>)   <span class="literal">NULL</span>,</div><div class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`PRIMARY`</span></div><div class="line">  PRIMARY <span class="keyword">KEY</span> (O_id)</div><div class="line">);</div></pre></td></tr></table></figure>
+<p>插入一条数据<br>1    1000    Bush    4</p>
+<h2 id="程序代码"><a href="#程序代码" class="headerlink" title="程序代码"></a>程序代码</h2><p>编写两个Java程序，开启两个事务对MySQL数据库进行访问</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTest</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"select * from Orders where O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line">            ResultSet rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs = ps.executeQuery();</div><div class="line">            <span class="keyword">while</span> (rs.next()) &#123;</div><div class="line">                System.out.println(rs.getInt(<span class="number">4</span>));</div><div class="line">            &#125;</div><div class="line">            rs.close();</div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="keyword">import</span> java.sql.*;</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcTestTwo</span> </span>&#123;</div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String JDBC_DRIVER = <span class="string">"com.mysql.jdbc.Driver"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String DB_URL = <span class="string">"jdbc:mysql://localhost/database2?useSSL=false"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String USER = <span class="string">"root"</span>;</div><div class="line"></div><div class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String PASS = <span class="string">"1234"</span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</div><div class="line">        Connection connection = <span class="keyword">null</span>;</div><div class="line">        Statement statement = <span class="keyword">null</span>;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            Class.forName(JDBC_DRIVER);</div><div class="line">            System.out.println(<span class="string">"connecting..."</span>);</div><div class="line">            connection = DriverManager.getConnection(DB_URL, USER, PASS);</div><div class="line">            connection.setAutoCommit(<span class="keyword">false</span>);</div><div class="line">            statement = connection.createStatement();</div><div class="line">            String sql = <span class="string">"UPDATE Orders SET col = 2 WHERE O_id = ?"</span>;</div><div class="line">            PreparedStatement ps = connection.prepareStatement(sql);</div><div class="line">            ps.setInt(<span class="number">1</span>,<span class="number">1</span>);</div><div class="line"><span class="comment">//            ResultSet rs = ps.executeQuery();</span></div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line">            <span class="keyword">int</span> count = ps.executeUpdate();</div><div class="line"><span class="comment">//            while (rs.next()) &#123;</span></div><div class="line"><span class="comment">//                System.out.println(rs.getInt(4));</span></div><div class="line"><span class="comment">//            &#125;</span></div><div class="line"><span class="comment">//            rs.close();</span></div><div class="line">            connection.commit();</div><div class="line">            connection.close();</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            e.printStackTrace();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在JdbcTest中对数据库表的同一条数据进行了两次查询，只需要在两次查询之间加一个断点，当程序暂停时，运行JdbcTest2，就可以观察到数据库中的数据变化是否符合隔离级别的定义。</p>
+<h2 id="读未提交"><a href="#读未提交" class="headerlink" title="读未提交"></a>读未提交</h2><p>将MySQL数据库全局隔离级别设置为读未提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest2，执行为update语句之后，暂停，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列已经变为2；</p>
+<h2 id="读提交"><a href="#读提交" class="headerlink" title="读提交"></a>读提交</h2><p>将MySQL数据库全局隔离级别设置为读提交的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL READ COMMITTED;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停程序；<br>2.运行JdbcTest,第一次查询出数据列为2，暂停程序，不提交；<br>3.继续运行JdbcTest，第二次查询出数据列仍然为4；</p>
+<p>若第二步不暂停直接提交，则第三步查询出的数据将为2；</p>
+<h2 id="可重复读"><a href="#可重复读" class="headerlink" title="可重复读"></a>可重复读</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL REPEATABLE READ;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2，直接提交，将数据修改为2；<br>3.运行JdbcTest，读出数据依然为2。</p>
+<h2 id="可序列化"><a href="#可序列化" class="headerlink" title="可序列化"></a>可序列化</h2><p>将MySQL数据库全局隔离级别设置为可重复读的命令：<br>SET GLOBAL TRANSACTION ISOLATION LEVEL SERIALIZABLE;</p>
+<p>1.运行JdbcTest，第一次查询出数据列col为4，暂停；<br>2.运行JdbcTest2,将一直被阻塞，直到JdbcTest恢复执行完后，它才能完成事务，或者超时抛出异常。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>数据库的隔离级别是很重要的特性，在不同场合使用不同的隔离级别会有不同的用处。大多数情况下使用的是可重复读。通过编程来验证隔离级别，可以更好地加深对知识的理解。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;数据库的事务隔离级别&quot;&gt;&lt;a href=&quot;#数据库的事务隔离级别&quot; class=&quot;headerlink&quot; title=&quot;数据库的事务隔离级别&quot;&gt;&lt;/a&gt;数据库的事务隔离级别&lt;/h2&gt;&lt;p&gt;一.读未提交&lt;br&gt;读未提交是指当一个事务在执行过程中，若另一个事务修改了同
     
     </summary>
     
@@ -543,6 +539,36 @@
   </entry>
   
   <entry>
+    <title>《Java核心技术（英文版）》读书笔记：Object类的equals方法</title>
+    <link href="http://yoursite.com/2017/03/01/hello-world/"/>
+    <id>http://yoursite.com/2017/03/01/hello-world/</id>
+    <published>2017-02-28T16:59:03.000Z</published>
+    <updated>2017-03-06T15:33:55.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> <span class="keyword">extends</span> <span class="title">Object</span></span></div></pre></td></tr></table></figure>
+<h2 id="equals方法"><a href="#equals方法" class="headerlink" title="equals方法"></a>equals方法</h2><h3 id="引用同一"><a href="#引用同一" class="headerlink" title="引用同一"></a>引用同一</h3><p>equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>从源代码可知，该实现是检查两个对象的引用是否相等，也即是检查两个对象是否指向Java堆中的同一个对象。这是因为，如果两个对象的引用指向同一个Java堆中的对象，则这两个对象必然是相等的。对极少数类的<br>对象来说，这个实现已经足够了。例如两个PrintStream对象。</p>
+<h3 id="状态相等"><a href="#状态相等" class="headerlink" title="状态相等"></a>状态相等</h3><p>如上文所述，对大多数类来说，Object中的equals实现是不够用的。因为很多时候，我们认为两个对象相等是基于它们具有相同的状态（即对象的属性，field）。例如，两个Employee对象，如果它们具有相同的姓名（name），<br>工资（salary）和雇佣日期（hire day），那它们就是相等的。它的实现如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object otherObject)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == otherObject)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (otherObject == <span class="keyword">null</span>)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        <span class="keyword">if</span> (getClass() ！= otherObject.getClass())</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        Employee other = (Employee) otherObject;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> name.equals(other.name)</div><div class="line">            &amp;&amp; salary == other.salary;</div><div class="line">            &amp;&amp; hireDay.equals(other.hireDay);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面的代码中，首先判断两个对象是否同一，其次判断被比较对象是否为null，再次比较两个对象所属的类是否相同（在此处，假定必须类相同才有可能相等），最后比较各个状态是否相等。注意如果状态也是对象的话，<br>则会递归调用它们的equals方法。</p>
+<p>这里要注意的是，Employee对象的name和hireDay等状态是有可能为null的，为了确保在这种情况下程序也是正确的，可以使用Objects.equals方法。调用Objects.equals(a, b)，若两个参数都是null返回true，<br>若其中一个为null返回false，以上都不成立则调用a.equals(b)。因此，上面方法的最后一条语句可修改为</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> Objects.equals(name, other.name)</div><div class="line">    &amp;&amp; salary == other.salary;</div><div class="line">    &amp;&amp; Objects.equals(hireDay, other.hireDay);</div></pre></td></tr></table></figure>
+<p>当在扩展类中定义了equals方法时，须首先调用超类的equals方法，如果返回false，则两个对象不可能相等。若返回true，即是超类定义的状态相等。则继续比较子类定义的状态。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
     <title>Java IO 中的PushbackInputStream类</title>
     <link href="http://yoursite.com/2017/03/01/PushbackInputStream/"/>
     <id>http://yoursite.com/2017/03/01/PushbackInputStream/</id>
@@ -573,36 +599,6 @@
     
       &lt;p&gt;PushbackInputstream类是Java IO中的一个较特别的类，因为它可以将读出的字节再推回流中。这也就是它的名字中Pushback的由来。下面首先介绍一下它的基本用法，再分析一下它的源代码。&lt;/p&gt;
 &lt;h2 id=&quot;使用方法&quot;&gt;&lt;a href=&quot;#使用方法&quot; 
-    
-    </summary>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>《Java核心技术（英文版）》读书笔记：Object类的equals方法</title>
-    <link href="http://yoursite.com/2017/03/01/hello-world/"/>
-    <id>http://yoursite.com/2017/03/01/hello-world/</id>
-    <published>2017-02-28T16:59:03.000Z</published>
-    <updated>2017-03-06T15:33:55.000Z</updated>
-    
-    <content type="html"><![CDATA[<p>Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> <span class="keyword">extends</span> <span class="title">Object</span></span></div></pre></td></tr></table></figure>
-<h2 id="equals方法"><a href="#equals方法" class="headerlink" title="equals方法"></a>equals方法</h2><h3 id="引用同一"><a href="#引用同一" class="headerlink" title="引用同一"></a>引用同一</h3><p>equals方法是Object类中用于判断一个对象和另一个对象是否相等的方法。在Object类中的实现如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> (<span class="keyword">this</span> == obj);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>从源代码可知，该实现是检查两个对象的引用是否相等，也即是检查两个对象是否指向Java堆中的同一个对象。这是因为，如果两个对象的引用指向同一个Java堆中的对象，则这两个对象必然是相等的。对极少数类的<br>对象来说，这个实现已经足够了。例如两个PrintStream对象。</p>
-<h3 id="状态相等"><a href="#状态相等" class="headerlink" title="状态相等"></a>状态相等</h3><p>如上文所述，对大多数类来说，Object中的equals实现是不够用的。因为很多时候，我们认为两个对象相等是基于它们具有相同的状态（即对象的属性，field）。例如，两个Employee对象，如果它们具有相同的姓名（name），<br>工资（salary）和雇佣日期（hire day），那它们就是相等的。它的实现如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</div><div class="line">    ...</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object otherObject)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == otherObject)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        <span class="keyword">if</span> (otherObject == <span class="keyword">null</span>)</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        <span class="keyword">if</span> (getClass() ！= otherObject.getClass())</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        Employee other = (Employee) otherObject;</div><div class="line"></div><div class="line">        <span class="keyword">return</span> name.equals(other.name)</div><div class="line">            &amp;&amp; salary == other.salary;</div><div class="line">            &amp;&amp; hireDay.equals(other.hireDay);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>上面的代码中，首先判断两个对象是否同一，其次判断被比较对象是否为null，再次比较两个对象所属的类是否相同（在此处，假定必须类相同才有可能相等），最后比较各个状态是否相等。注意如果状态也是对象的话，<br>则会递归调用它们的equals方法。</p>
-<p>这里要注意的是，Employee对象的name和hireDay等状态是有可能为null的，为了确保在这种情况下程序也是正确的，可以使用Objects.equals方法。调用Objects.equals(a, b)，若两个参数都是null返回true，<br>若其中一个为null返回false，以上都不成立则调用a.equals(b)。因此，上面方法的最后一条语句可修改为</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> Objects.equals(name, other.name)</div><div class="line">    &amp;&amp; salary == other.salary;</div><div class="line">    &amp;&amp; Objects.equals(hireDay, other.hireDay);</div></pre></td></tr></table></figure>
-<p>当在扩展类中定义了equals方法时，须首先调用超类的equals方法，如果返回false，则两个对象不可能相等。若返回true，即是超类定义的状态相等。则继续比较子类定义的状态。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Object类是Java中的一个全局超类——每一个Java类都扩展了它。但是你不必显示地如下声明：&lt;/p&gt;
-&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;div class=&quot;line&quot;
     
     </summary>
     

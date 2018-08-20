@@ -4,29 +4,29 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>博浪</title>
+    <title>Dubbo的同步调用在消费者端的实现机制 | 博浪</title>
     <meta name="viewport" content="width=device-width, initial-scale=1,user-scalable=no">
     
     <meta name="author" content="wts">
     
 
     
-    <meta name="description" content="title: Dubbo同步调用在消费者端的实现机制date: 2018-8-20—
-Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
-Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感">
+    <meta name="description" content="Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
+Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感觉来说是这样的）到远程服务返回结果，或是超时为止。
+那么Dubbo是如何实现这种同步调用">
 <meta property="og:type" content="article">
-<meta property="og:title" content="博浪">
+<meta property="og:title" content="Dubbo的同步调用在消费者端的实现机制">
 <meta property="og:url" content="http://yoursite.com/2018/08/20/dubbo同步调用的实现机制/index.html">
 <meta property="og:site_name" content="博浪">
-<meta property="og:description" content="title: Dubbo同步调用在消费者端的实现机制date: 2018-8-20—
-Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
-Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感">
-<meta property="og:updated_time" content="2018-08-20T14:56:14.000Z">
+<meta property="og:description" content="Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
+Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感觉来说是这样的）到远程服务返回结果，或是超时为止。
+那么Dubbo是如何实现这种同步调用">
+<meta property="og:updated_time" content="2018-08-20T15:01:27.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="博浪">
-<meta name="twitter:description" content="title: Dubbo同步调用在消费者端的实现机制date: 2018-8-20—
-Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
-Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感">
+<meta name="twitter:title" content="Dubbo的同步调用在消费者端的实现机制">
+<meta name="twitter:description" content="Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
+Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感觉来说是这样的）到远程服务返回结果，或是超时为止。
+那么Dubbo是如何实现这种同步调用">
 
     
     <link rel="alternative" href="/atom.xml" title="博浪" type="application/atom+xml">
@@ -82,14 +82,14 @@ Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2018/08/20/dubbo同步调用的实现机制/" title="" itemprop="url"></a>
+      <a href="/2018/08/20/dubbo同步调用的实现机制/" title="Dubbo的同步调用在消费者端的实现机制" itemprop="url">Dubbo的同步调用在消费者端的实现机制</a>
   </h1>
   <p class="article-author">By
        
 		<a href="/about" title="wts" target="_blank" itemprop="author">wts</a>
 		
   <p class="article-time">
-    <time datetime="2018-08-20T13:44:31.000Z" itemprop="datePublished"> Published 2018-08-20</time>
+    <time datetime="2018-08-19T16:00:00.000Z" itemprop="datePublished"> Published 2018-08-20</time>
     
   </p>
 </header>
@@ -102,9 +102,7 @@ Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线
 		
 		</div>
 		
-		<hr>
-<p>title: Dubbo同步调用在消费者端的实现机制<br>date: 2018-8-20<br>—</p>
-<h1 id="Dubbo的同步调用"><a href="#Dubbo的同步调用" class="headerlink" title="Dubbo的同步调用"></a>Dubbo的同步调用</h1><p>使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。</p>
+		<h1 id="Dubbo的同步调用"><a href="#Dubbo的同步调用" class="headerlink" title="Dubbo的同步调用"></a>Dubbo的同步调用</h1><p>使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。</p>
 <p>Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感觉来说是这样的）到远程服务返回结果，或是超时为止。</p>
 <p>那么Dubbo是如何实现这种同步调用机制的呢？我们知道RPC的本质是用TCP协议向另一个进程（可能在同一台机器上，也可能不在）发送请求，服务端进程接收到请求后，将请求解析为对本地方法的一个调用，调用之后将结果返回给客户端。客户端接收到返回之后，再将结果反序列化为需要的结果，返回给上层的业务。</p>
 <h1 id="Dubbo同步调用在客户端的实现"><a href="#Dubbo同步调用在客户端的实现" class="headerlink" title="Dubbo同步调用在客户端的实现"></a>Dubbo同步调用在客户端的实现</h1><p>Dubbo的整个调用流程是：<br>1.服务提供者导出服务到本机的IP和端口上，即是建立一个TCP服务器；<br>2.服务提供者发布服务到注册中心；<br>3.服务消费者向注册中心订阅服务提供者的信息；<br>4.服务消费者建立远程服务的代理，并建立一个TCP客户端。</p>
@@ -141,7 +139,7 @@ Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线
 
 	<div class="article-share" id="share">
 	
-	  <div data-url="http://yoursite.com/2018/08/20/dubbo同步调用的实现机制/" data-title="博浪" data-tsina="null" class="share clearfix">
+	  <div data-url="http://yoursite.com/2018/08/20/dubbo同步调用的实现机制/" data-title="Dubbo的同步调用在消费者端的实现机制 | 博浪" data-tsina="null" class="share clearfix">
 	  </div>
 	
 	</div>
