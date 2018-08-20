@@ -21,7 +21,7 @@ Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线
 <meta property="og:description" content="Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
 Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感觉来说是这样的）到远程服务返回结果，或是超时为止。
 那么Dubbo是如何实现这种同步调用">
-<meta property="og:updated_time" content="2018-08-20T15:01:27.000Z">
+<meta property="og:updated_time" content="2018-08-20T15:03:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dubbo的同步调用在消费者端的实现机制">
 <meta name="twitter:description" content="Dubbo的同步调用使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。
@@ -98,14 +98,14 @@ Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">Contents</strong>
 		
-			<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Dubbo的同步调用"><span class="toc-number">1.</span> <span class="toc-text">Dubbo的同步调用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Dubbo同步调用在客户端的实现"><span class="toc-number">2.</span> <span class="toc-text">Dubbo同步调用在客户端的实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+			<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dubbo的同步调用"><span class="toc-number">1.</span> <span class="toc-text">Dubbo的同步调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dubbo同步调用在客户端的实现"><span class="toc-number">2.</span> <span class="toc-text">Dubbo同步调用在客户端的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
 		
 		</div>
 		
-		<h1 id="Dubbo的同步调用"><a href="#Dubbo的同步调用" class="headerlink" title="Dubbo的同步调用"></a>Dubbo的同步调用</h1><p>使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。</p>
+		<h2 id="Dubbo的同步调用"><a href="#Dubbo的同步调用" class="headerlink" title="Dubbo的同步调用"></a>Dubbo的同步调用</h2><p>使用Dubbo很长时间了，基本使用的都是Dubbo的同步调用方式。Dubbo默认使用的是协议格式Dubbo协议，序列化方式是Hessian，传输层使用的是Tcp协议，默认使用netty框架。</p>
 <p>Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线程会一直阻塞（至少从使用者的感觉来说是这样的）到远程服务返回结果，或是超时为止。</p>
 <p>那么Dubbo是如何实现这种同步调用机制的呢？我们知道RPC的本质是用TCP协议向另一个进程（可能在同一台机器上，也可能不在）发送请求，服务端进程接收到请求后，将请求解析为对本地方法的一个调用，调用之后将结果返回给客户端。客户端接收到返回之后，再将结果反序列化为需要的结果，返回给上层的业务。</p>
-<h1 id="Dubbo同步调用在客户端的实现"><a href="#Dubbo同步调用在客户端的实现" class="headerlink" title="Dubbo同步调用在客户端的实现"></a>Dubbo同步调用在客户端的实现</h1><p>Dubbo的整个调用流程是：<br>1.服务提供者导出服务到本机的IP和端口上，即是建立一个TCP服务器；<br>2.服务提供者发布服务到注册中心；<br>3.服务消费者向注册中心订阅服务提供者的信息；<br>4.服务消费者建立远程服务的代理，并建立一个TCP客户端。</p>
+<h2 id="Dubbo同步调用在客户端的实现"><a href="#Dubbo同步调用在客户端的实现" class="headerlink" title="Dubbo同步调用在客户端的实现"></a>Dubbo同步调用在客户端的实现</h2><p>Dubbo的整个调用流程是：<br>1.服务提供者导出服务到本机的IP和端口上，即是建立一个TCP服务器；<br>2.服务提供者发布服务到注册中心；<br>3.服务消费者向注册中心订阅服务提供者的信息；<br>4.服务消费者建立远程服务的代理，并建立一个TCP客户端。</p>
 <p>以上几步分别是服务提供者和服务消费者启动时做的事情，这之后消费者和提供者之间就建立了TCP长连接，实际调用服务时是无需经过注册中心的，直接通过TCP连接完成。</p>
 <p>下面就来看一下消费者是如何发起到提供者的请求，以及如何实现对上层业务而言的同步调用，以及超时机制等。</p>
 <p>Dubbo消费者在发起调用之后，经过重重阻隔，经历了各种包装的代理类之后（暂时忽略集群容错和负载均衡等），最终会到达下面这个类：</p>
@@ -126,7 +126,7 @@ Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线
 <p>DefaultFuture中用了一个FUTURES的map来保存每个具体调用的DefaultFuture实例。它的key是每次调用的id，这个id就是用来区分不同的调用的，每个请求都不一样。之后在初始化这个类时，启动一个守护线程，它就是用来实现超时的。它的run方法如下：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">RemotingInvocationTimeoutScan</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</div><div class="line">                <span class="keyword">try</span> &#123;</div><div class="line">                    <span class="keyword">for</span> (DefaultFuture future : FUTURES.values()) &#123;</div><div class="line">                        <span class="keyword">if</span> (future == <span class="keyword">null</span> || future.isDone()) &#123;</div><div class="line">                            <span class="keyword">continue</span>;</div><div class="line">                        &#125;</div><div class="line">                        <span class="keyword">if</span> (System.currentTimeMillis() - future.getStartTimestamp() &gt; future.getTimeout()) &#123;</div><div class="line">                            <span class="comment">// create exception response.</span></div><div class="line">                            Response timeoutResponse = <span class="keyword">new</span> Response(future.getId());</div><div class="line">                            <span class="comment">// set timeout status.</span></div><div class="line">                            timeoutResponse.setStatus(future.isSent() ? Response.SERVER_TIMEOUT : Response.CLIENT_TIMEOUT);</div><div class="line">                            timeoutResponse.setErrorMessage(future.getTimeoutMessage(<span class="keyword">true</span>));</div><div class="line">                            <span class="comment">// handle response.</span></div><div class="line">                            DefaultFuture.received(future.getChannel(), timeoutResponse);</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                    Thread.sleep(<span class="number">30</span>);</div><div class="line">                &#125; <span class="keyword">catch</span> (Throwable e) &#123;</div><div class="line">                    logger.error(<span class="string">"Exception when scan the timeout invocation of remoting."</span>, e);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
 <p>逻辑很简单，就是每30毫秒轮询一次所有的DefaultFuture，若future已经有返回结果，则跳过；若没有返回，则计算一下当前时间是否超时，若超时，则构造一个超时的返回结果，之后调用上面提到的DefaultFuture的received方法。</p>
-<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>以上就是Dubbo同步调用在消费者端的大体实现。主要就是用了一个锁来将调用线程阻塞起来，之后netty接收到返回结果之后，会发信号唤醒调用线程。或是超时，也会返回一个超时的结果，并唤醒调用线程。这样就实现了对上层业务来说的同步调用。<br>因为Dubbo的流程非常复杂，因此本篇文章限于篇幅，无法将它的上下游流程勾勒得很清楚。只是提纲挈领地写出关键之处。对于整体流程的把握，还是需要自己去研究代码才行。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上就是Dubbo同步调用在消费者端的大体实现。主要就是用了一个锁来将调用线程阻塞起来，之后netty接收到返回结果之后，会发信号唤醒调用线程。或是超时，也会返回一个超时的结果，并唤醒调用线程。这样就实现了对上层业务来说的同步调用。<br>因为Dubbo的流程非常复杂，因此本篇文章限于篇幅，无法将它的上下游流程勾勒得很清楚。只是提纲挈领地写出关键之处。对于整体流程的把握，还是需要自己去研究代码才行。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -171,7 +171,7 @@ Dubbo的同步调用是指，调用一个远程服务时，发起调用这个线
   <div id="toc" class="toc-aside">
   <strong class="toc-title">Contents</strong>
  
- <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Dubbo的同步调用"><span class="toc-number">1.</span> <span class="toc-text">Dubbo的同步调用</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Dubbo同步调用在客户端的实现"><span class="toc-number">2.</span> <span class="toc-text">Dubbo同步调用在客户端的实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
+ <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dubbo的同步调用"><span class="toc-number">1.</span> <span class="toc-text">Dubbo的同步调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Dubbo同步调用在客户端的实现"><span class="toc-number">2.</span> <span class="toc-text">Dubbo同步调用在客户端的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
  
   </div>
 
